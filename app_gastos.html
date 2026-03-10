@@ -6,9 +6,50 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Finanzas del Hogar</title>
+<!-- ── FAVICON ── -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23005230'/%3E%3Cpath fill='%2374C69D' d='M34 20h-2v-2c0-3.31-2.69-6-6-6H10c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h2v2c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V22c0-1.1-.9-2-2-2zm-22 10V16h16v14H12zm22 4H16v-2h10c1.1 0 2-.9 2-2v-8h6v12z'/%3E%3Ccircle cx='26' cy='28' r='2.5' fill='%23005230'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23005230'/%3E%3Cpath fill='%2374C69D' d='M34 20h-2v-2c0-3.31-2.69-6-6-6H10c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h2v2c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V22c0-1.1-.9-2-2-2zm-22 10V16h16v14H12zm22 4H16v-2h10c1.1 0 2-.9 2-2v-8h6v12z'/%3E%3Ccircle cx='26' cy='28' r='2.5' fill='%23005230'/%3E%3C/svg%3E">
+<!-- ── FONTS ── -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ════════════════════════════════════════════════════
+   MATERIAL SYMBOLS
+════════════════════════════════════════════════════ */
+.mi {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
+}
+.mi-outline { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+.mi-20 { font-size: 20px; }
+.mi-18 { font-size: 18px; }
+.mi-16 { font-size: 16px; }
+.mi-28 { font-size: 28px; }
+.mi-32 { font-size: 32px; }
+.mi-40 { font-size: 40px; }
+.mi-48 { font-size: 48px; }
+
+/* cat icon chips */
+.cat-chip {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.cat-chip .mi { font-size: 18px; }
+
 /* ════════════════════════════════════════════════════
    MATERIAL DESIGN 3 — TOKENS DE COLOR
    Paleta: Verde bosque mate · Premium · Matte finish
@@ -1095,7 +1136,7 @@ html, body {
 <!-- ════════ PIN SCREEN ════════ -->
 <div class="pin-screen" id="pin-screen">
   <div class="pin-brand">
-    <div class="pin-logo-wrap">💰</div>
+    <div class="pin-logo-wrap"><span class="mi mi-48" style="color:var(--md-on-primary-cont)">account_balance_wallet</span></div>
     <div class="pin-app-name">Finanzas del Hogar</div>
     <div class="pin-app-sub">Tu economía familiar, bajo control</div>
   </div>
@@ -1126,14 +1167,15 @@ html, body {
 
 <!-- ════════ TOP BAR ════════ -->
 <div class="topbar">
-  <div class="topbar-logo">💰</div>
+  <div class="topbar-logo"><span class="mi mi-20" style="color:var(--md-on-primary-cont)">account_balance_wallet</span></div>
   <div class="topbar-title">Hogar <span>&</span> Finanzas</div>
   <button class="month-pill" onclick="openMonthModal()">
+    <span class="mi mi-16">calendar_month</span>
     <span id="month-display">Enero 2025</span>
-    <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="mi mi-16">expand_more</span>
   </button>
   <button class="refresh-btn" id="refresh-btn" onclick="refreshData()" title="Actualizar">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+    <span class="mi mi-20 mi-outline">refresh</span>
   </button>
 </div>
 
@@ -1143,21 +1185,21 @@ html, body {
   <!-- SETUP VIEW -->
   <div class="view active" id="view-setup">
     <div class="setup-hero">
-      <div class="setup-logo-wrap">💰</div>
+      <div class="setup-logo-wrap"><span class="mi mi-48" style="color:var(--md-on-primary-cont)">account_balance_wallet</span></div>
       <div class="setup-title">Bienvenido</div>
       <div class="setup-sub">Configura la app una sola vez para empezar</div>
     </div>
 
     <div class="setup-tabs">
-      <div class="setup-tab active" id="setup-tab-new" onclick="switchSetupTab('new')">🚀 Primera vez</div>
-      <div class="setup-tab" id="setup-tab-recover" onclick="switchSetupTab('recover')">🗝️ Recuperar cuenta</div>
+      <div class="setup-tab active" id="setup-tab-new" onclick="switchSetupTab('new')"><span class="mi mi-16">rocket_launch</span> Primera vez</div>
+      <div class="setup-tab" id="setup-tab-recover" onclick="switchSetupTab('recover')"><span class="mi mi-16">key</span> Recuperar cuenta</div>
     </div>
 
     <!-- Nueva configuración -->
     <div id="setup-panel-new">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">🔗 Conectar Google Sheets</div></div>
+          <div><div class="card-title"><span class="mi mi-18">link</span> Conectar Google Sheets</div></div>
         </div>
         <div class="setup-steps">
           <div class="setup-step"><div class="step-num">1</div><div>Ve a <strong>script.google.com</strong> → nuevo proyecto → pega el <code>Code.gs</code></div></div>
@@ -1172,7 +1214,7 @@ html, body {
       </div>
 
       <div class="card">
-        <div class="card-header"><div class="card-title">👥 Vuestros nombres</div></div>
+        <div class="card-header"><div class="card-title"><span class="mi mi-18">group</span> Vuestros nombres</div></div>
         <div class="row-fields">
           <div class="field">
             <label>Tu nombre</label>
@@ -1186,7 +1228,7 @@ html, body {
       </div>
 
       <div class="card">
-        <div class="card-header"><div class="card-title">🔐 PIN de acceso</div></div>
+        <div class="card-header"><div class="card-title"><span class="mi mi-18">lock</span> PIN de acceso</div></div>
         <p style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:14px;line-height:1.5">Elige un PIN de 4 dígitos. Sin él no podrás entrar.</p>
         <div class="row-fields">
           <div class="field">
@@ -1205,20 +1247,20 @@ html, body {
     <!-- Recuperar cuenta -->
     <div id="setup-panel-recover" style="display:none">
       <div class="card">
-        <div class="card-header"><div class="card-title">🗝️ Restaurar desde llave</div></div>
+        <div class="card-header"><div class="card-title"><span class="mi mi-18">key</span> Restaurar desde llave</div></div>
         <p style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:16px;line-height:1.6">
           Carga el archivo <strong>hogar_recovery_key.txt</strong> para recuperar tu URL, PIN y nombres al instante.
         </p>
         <div class="field">
           <label>Selecciona tu archivo .txt</label>
           <label class="file-drop" for="recover-file-input">
-            <span id="recover-drop-text">📂 Toca para abrir el archivo</span>
+            <span id="recover-drop-text"><span class="mi mi-20">folder_open</span> Toca para abrir el archivo</span>
             <input type="file" id="recover-file-input" accept=".txt" style="display:none" onchange="importRecoveryKeySetup(this)">
           </label>
         </div>
         <div id="recover-preview" style="display:none;margin-top:12px" class="recovery-preview">
           <div id="recover-preview-content"></div>
-          <button class="btn btn-primary" style="margin-top:14px" onclick="applyRecoveryKeySetup()">✅ Restaurar y entrar</button>
+          <button class="btn btn-primary" style="margin-top:14px" onclick="applyRecoveryKeySetup()"><span class="mi mi-18">check_circle</span> Restaurar y entrar</button>
         </div>
       </div>
     </div>
@@ -1237,9 +1279,9 @@ html, body {
   <!-- AÑADIR -->
   <div class="view" id="view-add">
     <div class="add-tabs">
-      <div class="add-tab active" onclick="switchAddTab('diario')">🛒 Gasto</div>
-      <div class="add-tab" onclick="switchAddTab('ingreso')">💰 Ingreso</div>
-      <div class="add-tab" onclick="switchAddTab('recurrente')">🔄 Fijo</div>
+      <div class="add-tab active" onclick="switchAddTab('diario')"><span class="mi mi-16">shopping_cart</span> Gasto</div>
+      <div class="add-tab" onclick="switchAddTab('ingreso')"><span class="mi mi-16">payments</span> Ingreso</div>
+      <div class="add-tab" onclick="switchAddTab('recurrente')"><span class="mi mi-16">autorenew</span> Fijo</div>
     </div>
 
     <!-- Gasto diario -->
@@ -1295,7 +1337,7 @@ html, body {
             <input type="text" id="d-notas" placeholder="opcional">
           </div>
         </div>
-        <button class="btn btn-primary" id="btn-add-diario" onclick="addDiario()">Guardar gasto 💾</button>
+        <button class="btn btn-primary" id="btn-add-diario" onclick="addDiario()">Guardar gasto</button>
       </div>
     </div>
 
@@ -1330,7 +1372,7 @@ html, body {
             <input type="text" id="i-notas" placeholder="opcional">
           </div>
         </div>
-        <button class="btn btn-primary" id="btn-add-ingreso" onclick="addIngreso()">Guardar ingreso 💾</button>
+        <button class="btn btn-primary" id="btn-add-ingreso" onclick="addIngreso()">Guardar ingreso</button>
       </div>
     </div>
 
@@ -1372,7 +1414,7 @@ html, body {
           <label>Notas</label>
           <input type="text" id="r-notas" placeholder="opcional">
         </div>
-        <button class="btn btn-primary" id="btn-add-rec" onclick="addRecurrente()">Guardar gasto fijo 💾</button>
+        <button class="btn btn-primary" id="btn-add-rec" onclick="addRecurrente()">Guardar gasto fijo</button>
       </div>
     </div>
   </div>
@@ -1386,19 +1428,19 @@ html, body {
   <div class="view" id="view-settings">
 
     <div class="card">
-      <div class="card-header"><div class="card-title">🎨 Apariencia</div></div>
+      <div class="card-header"><div class="card-title"><span class="mi mi-18">palette</span> Apariencia</div></div>
       <div style="margin-bottom:4px">
         <div class="settings-label" style="margin-bottom:10px">Tema de la aplicación</div>
         <div class="theme-pills">
-          <button class="theme-pill" data-theme-val="light" onclick="setTheme('light')">☀️ Claro</button>
-          <button class="theme-pill" data-theme-val="dark" onclick="setTheme('dark')">🌙 Oscuro</button>
-          <button class="theme-pill active" data-theme-val="auto" onclick="setTheme('auto')">⚡ Auto</button>
+          <button class="theme-pill" data-theme-val="light" onclick="setTheme('light')"><span class="mi mi-16">light_mode</span> Claro</button>
+          <button class="theme-pill" data-theme-val="dark" onclick="setTheme('dark')"><span class="mi mi-16">dark_mode</span> Oscuro</button>
+          <button class="theme-pill active" data-theme-val="auto" onclick="setTheme('auto')"><span class="mi mi-16">brightness_auto</span> Auto</button>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-header"><div class="card-title">⚙️ Configuración</div></div>
+      <div class="card-header"><div class="card-title"><span class="mi mi-18">settings</span> Configuración</div></div>
       <div class="settings-row">
         <div>
           <div class="settings-label">URL del Script</div>
@@ -1416,7 +1458,7 @@ html, body {
     </div>
 
     <div class="card">
-      <div class="card-header"><div class="card-title">✏️ Modificar configuración</div></div>
+      <div class="card-header"><div class="card-title"><span class="mi mi-18">edit</span> Modificar configuración</div></div>
       <div class="field">
         <label>URL de Google Apps Script</label>
         <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
@@ -1438,32 +1480,32 @@ html, body {
           <input type="text" id="cfg-p2" placeholder="ej: María">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="saveSettingsChanges()">💾 Guardar cambios</button>
+      <button class="btn btn-primary" onclick="saveSettingsChanges()"><span class="mi mi-18">save</span> Guardar cambios</button>
     </div>
 
     <div class="card">
-      <div class="card-header"><div class="card-title">🗝️ Llave de recuperación</div></div>
+      <div class="card-header"><div class="card-title"><span class="mi mi-18">key</span> Llave de recuperación</div></div>
       <p style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:14px;line-height:1.6">
         Exporta una llave para recuperar toda tu configuración si pierdes el acceso a la app.
       </p>
       <button class="btn btn-tonal" onclick="exportRecoveryKey()" style="margin-bottom:12px">
-        🗝️ Exportar llave (.txt)
+        <span class="mi mi-18">key</span> Exportar llave (.txt)
       </button>
       <div class="field">
         <label>Restaurar desde llave</label>
         <label class="file-drop" for="recovery-file-input">
-          <span id="file-drop-text">📂 Selecciona tu archivo .txt</span>
+          <span id="file-drop-text"><span class="mi mi-20">folder_open</span> Selecciona tu archivo .txt</span>
           <input type="file" id="recovery-file-input" accept=".txt" style="display:none" onchange="importRecoveryKey(this)">
         </label>
       </div>
       <div id="recovery-preview" style="display:none" class="recovery-preview">
         <div id="recovery-preview-content"></div>
-        <button class="btn btn-primary" style="margin-top:12px" onclick="applyRecoveryKey()">✅ Restaurar configuración</button>
+        <button class="btn btn-primary" style="margin-top:12px" onclick="applyRecoveryKey()"><span class="mi mi-18">check_circle</span> Restaurar configuración</button>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-header"><div class="card-title">ℹ️ Acerca de</div></div>
+      <div class="card-header"><div class="card-title"><span class="mi mi-18">info</span> Acerca de</div></div>
       <p style="font-size:13px;color:var(--md-on-surface-var);line-height:1.7">
         Los datos viven en tu Google Sheet. La app es la interfaz móvil para consultarlos y añadir registros.<br><br>
         Configuración almacenada localmente. Usa la llave de recuperación como copia de seguridad.
@@ -1480,23 +1522,25 @@ html, body {
 <!-- ════════ BOTTOM NAV ════════ -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="nav-dashboard" onclick="showView('dashboard')">
-    <div class="nav-icon-wrap">📊</div>
+    <div class="nav-icon-wrap"><span class="mi mi-20">bar_chart</span></div>
     <span>Resumen</span>
   </button>
   <button class="nav-item" id="nav-diarios" onclick="showView('diarios')">
-    <div class="nav-icon-wrap">🛒</div>
+    <div class="nav-icon-wrap"><span class="mi mi-20">shopping_cart</span></div>
     <span>Gastos</span>
   </button>
   <div class="nav-fab">
-    <button class="fab-btn" id="nav-add" onclick="showView('add')">＋</button>
+    <button class="fab-btn" id="nav-add" onclick="showView('add')">
+      <span class="mi mi-28">add</span>
+    </button>
     <span class="fab-label">Añadir</span>
   </div>
   <button class="nav-item" id="nav-more" onclick="showView('more')">
-    <div class="nav-icon-wrap">📋</div>
+    <div class="nav-icon-wrap"><span class="mi mi-20">format_list_bulleted</span></div>
     <span>Listas</span>
   </button>
   <button class="nav-item" id="nav-settings" onclick="showView('settings')">
-    <div class="nav-icon-wrap">⚙️</div>
+    <div class="nav-icon-wrap"><span class="mi mi-20">settings</span></div>
     <span>Ajustes</span>
   </button>
 </nav>
@@ -1594,9 +1638,21 @@ const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
                "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
 const CAT_ICONS = {
-  "Alimentación":"🍎","Transporte":"🚗","Ocio":"🎬","Salud":"🏥",
-  "Ropa":"👗","Tecnología":"💻","Hogar":"🏠","Suministros":"⚡","Otros":"📦"
+  "Alimentación":"restaurant",
+  "Transporte":"directions_car",
+  "Ocio":"movie",
+  "Salud":"local_hospital",
+  "Ropa":"checkroom",
+  "Tecnología":"laptop",
+  "Hogar":"home",
+  "Suministros":"bolt",
+  "Otros":"inventory_2"
 };
+// Render a category icon chip
+function catIcon(cat, color) {
+  const ic = CAT_ICONS[cat] || 'inventory_2';
+  return `<span class="cat-chip" style="background:color-mix(in srgb,${color} 18%,transparent)"><span class="mi mi-outline" style="font-size:17px;color:${color}">${ic}</span></span>`;
+}
 const CAT_COLORS = {
   "Alimentación":"var(--cat-food)",
   "Transporte":"var(--cat-transport)",
@@ -1686,7 +1742,7 @@ function _pinChangeMode() {
       if (pinBuffer===firstPin) {
         localStorage.setItem('appPin',pinBuffer);
         screen.classList.add('hidden');
-        showToast('✅ PIN actualizado correctamente','success');
+        showToast('PIN actualizado correctamente ✓','success');
         initPin();
       } else {
         showPinError('Los PINs no coinciden. Inténtalo de nuevo.');
@@ -1720,7 +1776,7 @@ function bootApp() {
   }
   if (!hasPin()) {
     document.getElementById('pin-screen').classList.remove('hidden');
-    document.getElementById('pin-subtitle').textContent='⚠️ Configura un PIN primero';
+    document.getElementById('pin-subtitle').textContent='Configura un PIN primero';
     document.getElementById('pin-setup-link').style.display='block';
     document.getElementById('pin-setup-link').textContent='Configurar PIN →';
     document.getElementById('pin-setup-link').onclick=()=>_pinChangeMode();
@@ -1801,18 +1857,15 @@ function renderDashboard(d) {
   const pct = n=>(Math.round((n||0)*100))+'%';
   const bal = d.balance||0;
   const balClass = bal>=0?'':'neg';
-  const balIcon = bal>=0?'📈':'📉';
+  const balIcon = bal>=0?'<span class="mi mi-32" style="color:var(--md-on-primary-cont)">trending_up</span>':'<span class="mi mi-32" style="color:var(--md-error)">trending_down</span>';
   const cats = Object.entries(d.por_categoria||{}).filter(([,v])=>v.total>0).sort((a,b)=>b[1].total-a[1].total);
   const maxCat = cats[0]?.[1].total||1;
   const catsHTML = cats.map(([cat,vals])=>{
     const barPct=Math.round((vals.total/maxCat)*100);
     const color=CAT_COLORS[cat]||'var(--cat-other)';
-    const icon=CAT_ICONS[cat]||'📦';
     return `<div class="cat-row">
       <div class="cat-meta">
-        <span class="cat-name">
-          <span class="cat-icon-wrap" style="background:color-mix(in srgb,${color} 18%,transparent)">${icon}</span>${cat}
-        </span>
+        <span class="cat-name">${catIcon(cat,color)} ${cat}</span>
         <span class="cat-amount" style="color:${color}">${fmt(vals.total)}</span>
       </div>
       <div class="bar-track"><div class="bar-fill" style="width:${barPct}%;background:${color}"></div></div>
@@ -1866,17 +1919,17 @@ async function loadDiarios() {
   catch(e) { el.innerHTML=renderError(e); }
 }
 function renderDiarios(items) {
-  if (!items.length) return `<div class="empty"><div class="icon">🛒</div><p>Sin gastos en ${state.mes} ${state.anio}.<br>Usa el botón <strong>＋</strong> para añadir.</p></div>`;
+  if (!items.length) return `<div class="empty"><div style="margin-bottom:12px"><span class="mi mi-40" style="color:var(--md-outline)">shopping_cart</span></div><p>Sin gastos en ${state.mes} ${state.anio}.<br>Usa el botón <strong>＋</strong> para añadir.</p></div>`;
   const fmt=n=>(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
   const total=items.reduce((s,i)=>s+(i.importe||0),0);
   const list=items.map(item=>{
     const color=CAT_COLORS[item.categoria]||'var(--cat-other)';
-    const dot=item.quien===state.myName?'🟢':item.quien===state.p2Name?'🔵':'⚪';
+    const dot=item.quien===state.myName?'<span class="mi mi-16" style="color:var(--cat-food)">person</span>':item.quien===state.p2Name?'<span class="mi mi-16" style="color:var(--cat-health)">person</span>':'<span class="mi mi-16" style="color:var(--md-on-surface-var)">group</span>';
     return `<div class="expense-item">
-      <div class="expense-icon" style="background:color-mix(in srgb,${color} 18%,transparent);color:${color}">${CAT_ICONS[item.categoria]||'📦'}</div>
+      <div class="expense-icon" style="background:color-mix(in srgb,${color} 18%,transparent);color:${color}"><span class="mi mi-outline" style="font-size:22px">${CAT_ICONS[item.categoria]||'inventory_2'}</span></div>
       <div class="expense-info">
         <div class="expense-desc">${item.descripcion||'—'}</div>
-        <div class="expense-meta">${dot} ${item.quien} · ${item.fecha||''} · ${item.pago||''}</div>
+        <div class="expense-meta" style="display:flex;align-items:center;gap:4px">${dot} ${item.quien} · ${item.fecha||''} · ${item.pago||''}</div>
       </div>
       <div class="expense-amount neg">${fmt(item.importe)}</div>
     </div>`;
@@ -1906,7 +1959,7 @@ function renderMore(recurrentes,ingresos) {
     const isOn=r.activo==='✅';
     const color=CAT_COLORS[r.categoria]||'var(--cat-other)';
     return `<div class="rec-item">
-      <div class="expense-icon" style="background:color-mix(in srgb,${color} 18%,transparent);color:${color}">${CAT_ICONS[r.categoria]||'📦'}</div>
+      <div class="expense-icon" style="background:color-mix(in srgb,${color} 18%,transparent);color:${color}"><span class="mi mi-outline" style="font-size:22px">${CAT_ICONS[r.categoria]||'inventory_2'}</span></div>
       <div class="rec-info"><div class="rec-name">${r.nombre||'—'}</div>
       <div class="rec-meta">${r.categoria||''} · día ${r.dia_cobro||'?'} · ${r.frecuencia||''}</div></div>
       <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;margin-right:10px;color:${isOn?'var(--md-on-surface)':'var(--md-on-surface-var)'}">${fmt(r.importe)}</div>
@@ -1915,19 +1968,19 @@ function renderMore(recurrentes,ingresos) {
   }).join('');
   const ingList=ingresos.length?ingresos.map(i=>`
     <div class="expense-item">
-      <div class="expense-icon" style="background:color-mix(in srgb,var(--cat-food) 18%,transparent);color:var(--cat-food)">💰</div>
+      <div class="expense-icon" style="background:color-mix(in srgb,var(--cat-food) 18%,transparent);color:var(--cat-food)"><span class="mi mi-outline" style="font-size:22px">payments</span></div>
       <div class="expense-info"><div class="expense-desc">${i.concepto||'—'}</div>
       <div class="expense-meta">${i.persona||''} · ${i.mes||''} ${i.anio||''}</div></div>
       <div class="expense-amount pos">${fmt(i.importe)}</div>
     </div>`).join(''):'<div class="empty"><p>Sin ingresos este mes</p></div>';
-  return `<div class="section-title">📅 Gastos Recurrentes</div>
+  return `<div class="section-title"><span class="mi mi-18">autorenew</span> Gastos Recurrentes</div>
   <div class="card" style="margin-bottom:10px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span style="font-size:13px;color:var(--md-on-surface-var)">${activos.length} activos de ${recurrentes.length}</span>
       <span style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--cat-leisure)">${fmt(totalRec)}/mes</span>
     </div>${recList||'<div class="empty"><p>Sin gastos fijos configurados</p></div>'}
   </div>
-  <div class="section-title">💰 Ingresos · ${state.mes} ${state.anio}</div>
+  <div class="section-title"><span class="mi mi-18">payments</span> Ingresos · ${state.mes} ${state.anio}</div>
   <div class="card">${ingList}</div>`;
 }
 async function toggleRec(fila,nuevoEstado,el) {
@@ -1960,10 +2013,10 @@ async function addDiario() {
   btn.disabled=true; btn.textContent='Guardando...';
   try {
     await api({action:'addDiario',mes:document.getElementById('d-mes').value,anio:document.getElementById('d-anio').value,fecha:formatDate(document.getElementById('d-fecha').value),categoria:document.getElementById('d-cat').value,descripcion:desc,importe:imp,quien:document.getElementById('d-quien').value,pago:document.getElementById('d-pago').value,notas:document.getElementById('d-notas').value.trim()});
-    showToast('✅ Gasto guardado','success');
+    showToast('Gasto guardado ✓','success');
     document.getElementById('d-imp').value=''; document.getElementById('d-desc').value=''; document.getElementById('d-notas').value='';
-  } catch(e){showToast('❌ Error: '+e.message,'error');}
-  finally{btn.disabled=false;btn.textContent='Guardar gasto 💾';}
+  } catch(e){showToast('Error: '+e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='Guardar gasto';}
 }
 async function addIngreso() {
   const btn=document.getElementById('btn-add-ingreso');
@@ -1974,10 +2027,10 @@ async function addIngreso() {
   btn.disabled=true; btn.textContent='Guardando...';
   try {
     await api({action:'addIngreso',mes:document.getElementById('i-mes').value,anio:document.getElementById('i-anio').value,persona:document.getElementById('i-persona').value,concepto,importe:imp,notas:document.getElementById('i-notas').value.trim()});
-    showToast('✅ Ingreso guardado','success');
+    showToast('Ingreso guardado ✓','success');
     document.getElementById('i-imp').value=''; document.getElementById('i-concepto').value=''; document.getElementById('i-notas').value='';
-  } catch(e){showToast('❌ Error: '+e.message,'error');}
-  finally{btn.disabled=false;btn.textContent='Guardar ingreso 💾';}
+  } catch(e){showToast('Error: '+e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='Guardar ingreso';}
 }
 async function addRecurrente() {
   const btn=document.getElementById('btn-add-rec');
@@ -1988,10 +2041,10 @@ async function addRecurrente() {
   btn.disabled=true; btn.textContent='Guardando...';
   try {
     await api({action:'addRecurrente',nombre,categoria:document.getElementById('r-cat').value,importe:imp,dia_cobro:document.getElementById('r-dia').value||1,frecuencia:document.getElementById('r-frec').value,activo:'✅',notas:document.getElementById('r-notas').value.trim()});
-    showToast('✅ Gasto fijo añadido','success');
+    showToast('Gasto fijo añadido ✓','success');
     document.getElementById('r-nombre').value=''; document.getElementById('r-imp').value=''; document.getElementById('r-notas').value='';
-  } catch(e){showToast('❌ Error: '+e.message,'error');}
-  finally{btn.disabled=false;btn.textContent='Guardar gasto fijo 💾';}
+  } catch(e){showToast('Error: '+e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='Guardar gasto fijo';}
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -2022,10 +2075,10 @@ async function saveSetup() {
     localStorage.setItem('nombre2',p2); localStorage.setItem('appPin',pin);
     localStorage.setItem('configured','1');
     updatePersonaSelects();
-    showToast('✅ Conectado y configurado','success');
+    showToast('Conectado y configurado ✓','success');
     setTimeout(()=>{document.getElementById('pin-screen').classList.add('hidden');showView('dashboard');loadSettings();},700);
   } catch(e){
-    showToast('❌ No se pudo conectar. Revisa la URL.','error');
+    showToast('No se pudo conectar. Revisa la URL.','error');
     btn.disabled=false; btn.textContent='Conectar y empezar →';
   }
 }
@@ -2040,14 +2093,14 @@ function exportRecoveryKey() {
   const encoded=RK_MAGIC+btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
   const blob=new Blob([encoded],{type:'text/plain'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hogar_recovery_key.txt'; a.click(); URL.revokeObjectURL(a.href);
-  showToast('🗝️ Llave exportada. Guárdala en Drive.','success');
+  showToast('Llave exportada. Guárdala en Drive.','success');
 }
 function _parseRecoveryFile(text) {
   if (!text.trim().startsWith(RK_MAGIC)) throw new Error('Formato no reconocido');
   return JSON.parse(decodeURIComponent(escape(atob(text.trim().slice(RK_MAGIC.length)))));
 }
 function _recoveryPreviewHTML(d) {
-  return `<div class="recovery-row"><span class="rk-label">URL Script</span><span class="rk-val">${d.u?'✅ Guardada':'⚠️ Vacía'}</span></div>
+  return `<div class="recovery-row"><span class="rk-label">URL Script</span><span class="rk-val">${d.u?'<span class="badge-green">Guardada</span>':'<span style="color:var(--md-warning)">Vacía</span>'}</span></div>
   <div class="recovery-row"><span class="rk-label">PIN</span><span class="rk-val">••••</span></div>
   <div class="recovery-row"><span class="rk-label">Persona 1</span><span class="rk-val">${d.n1}</span></div>
   <div class="recovery-row"><span class="rk-label">Persona 2</span><span class="rk-val">${d.n2}</span></div>
@@ -2058,7 +2111,7 @@ function importRecoveryKeySetup(input) {
   const file=input.files[0]; if (!file) return;
   document.getElementById('recover-drop-text').textContent='📄 '+file.name;
   const reader=new FileReader();
-  reader.onload=e=>{try{const d=_parseRecoveryFile(e.target.result);_setupRecoveryData=d;document.getElementById('recover-preview-content').innerHTML=_recoveryPreviewHTML(d);document.getElementById('recover-preview').style.display='block';showToast('✅ Llave leída','success');}catch{showToast('❌ Archivo no válido','error');}};
+  reader.onload=e=>{try{const d=_parseRecoveryFile(e.target.result);_setupRecoveryData=d;document.getElementById('recover-preview-content').innerHTML=_recoveryPreviewHTML(d);document.getElementById('recover-preview').style.display='block';showToast('Llave leída','success');}catch{showToast('Archivo no válido','error');}};
   reader.readAsText(file);
 }
 function applyRecoveryKeySetup() {
@@ -2066,7 +2119,7 @@ function applyRecoveryKeySetup() {
   localStorage.setItem('scriptUrl',d.u||''); localStorage.setItem('appPin',d.p||'');
   localStorage.setItem('nombre1',d.n1||'Persona 1'); localStorage.setItem('nombre2',d.n2||'Persona 2');
   localStorage.setItem('configured','1'); updatePersonaSelects();
-  showToast('✅ Cuenta restaurada','success');
+  showToast('Cuenta restaurada ✓','success');
   setTimeout(()=>{document.getElementById('pin-screen').classList.add('hidden');showView('dashboard');loadSettings();},800);
 }
 let _settingsRecoveryData=null;
@@ -2074,7 +2127,7 @@ function importRecoveryKey(input) {
   const file=input.files[0]; if (!file) return;
   document.getElementById('file-drop-text').textContent='📄 '+file.name;
   const reader=new FileReader();
-  reader.onload=e=>{try{const d=_parseRecoveryFile(e.target.result);_settingsRecoveryData=d;document.getElementById('recovery-preview-content').innerHTML=_recoveryPreviewHTML(d);document.getElementById('recovery-preview').style.display='block';showToast('✅ Llave leída','success');}catch{showToast('❌ Archivo no válido','error');}};
+  reader.onload=e=>{try{const d=_parseRecoveryFile(e.target.result);_settingsRecoveryData=d;document.getElementById('recovery-preview-content').innerHTML=_recoveryPreviewHTML(d);document.getElementById('recovery-preview').style.display='block';showToast('Llave leída','success');}catch{showToast('Archivo no válido','error');}};
   reader.readAsText(file);
 }
 function applyRecoveryKey() {
@@ -2082,7 +2135,7 @@ function applyRecoveryKey() {
   localStorage.setItem('scriptUrl',d.u||''); localStorage.setItem('appPin',d.p||'');
   localStorage.setItem('nombre1',d.n1||'Persona 1'); localStorage.setItem('nombre2',d.n2||'Persona 2');
   localStorage.setItem('configured','1'); updatePersonaSelects(); loadSettings();
-  showToast('✅ Configuración restaurada','success');
+  showToast('Configuración restaurada ✓','success');
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -2110,7 +2163,7 @@ function saveSettingsChanges() {
   if (p1)  localStorage.setItem('nombre1',p1);
   if (p2)  localStorage.setItem('nombre2',p2);
   updatePersonaSelects(); loadSettings();
-  showToast('✅ Cambios guardados','success');
+  showToast('Cambios guardados ✓','success');
 }
 function downloadConfiguredFile(){saveSettingsChanges();}
 function editUrl(){}  function editName(){}  function saveNames(){saveSettingsChanges();}
