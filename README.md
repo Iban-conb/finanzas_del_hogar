@@ -15,10 +15,11 @@ A progressive web app (PWA) for managing household finances as a couple. No serv
 
 🗂️ Project structure
 
-
 /
 ├── app_gastos.html          # Complete web app (single self-contained file)
+
 ├── Code.gs                  # Google Apps Script backend
+
 └── Control_Hogar_2025.xlsx  # Excel template to import into Google Sheets
 
 
