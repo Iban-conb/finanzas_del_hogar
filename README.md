@@ -14,12 +14,16 @@ A progressive web app (PWA) for managing household finances as a couple. No serv
 
 
 🗂️ Project structure
+
+
 /
 ├── app_gastos.html          # Complete web app (single self-contained file)
 ├── Code.gs                  # Google Apps Script backend
 └── Control_Hogar_2025.xlsx  # Excel template to import into Google Sheets
 
+
 🚀 Setup guide
+
 1. Prepare your Google Sheet
 
 Upload Control_Hogar_2025.xlsx to Google Drive
@@ -61,6 +65,8 @@ Save the .txt file somewhere safe (e.g. your Google Drive).
 If you ever clear your browser data or switch devices, load the key on the setup screen to restore everything instantly — no re-configuration needed.
 
 🏗️ Architecture
+
+
 ┌──────────────────┐    GET requests    ┌───────────────────────┐
 │  app_gastos.html │ ─────────────────► │  Google Apps Script   │
 │  (GitHub Pages)  │                    │  (API endpoint)       │
@@ -71,6 +77,8 @@ If you ever clear your browser data or switch devices, load the key on the setup
                                         │    Google Sheets      │
                                         │    (your database)    │
                                         └───────────────────────┘
+
+
 
 No custom server or database — everything lives in your Google Sheets
 No third-party auth — the script URL is the only access key; share it only with your partner
