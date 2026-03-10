@@ -1,4 +1,4 @@
-Readme · MDCopiar💰 Household Finance Tracker
+💰 Household Finance Tracker
 A progressive web app (PWA) for managing household finances as a couple. No servers, no subscriptions, no ads. Your data lives entirely in your own Google Sheets account.
 
 ✨ Features
