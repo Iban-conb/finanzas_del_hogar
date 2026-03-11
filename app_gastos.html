@@ -1832,28 +1832,47 @@ function showView(name) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  API
+//  API — usa JSONP para evitar bloqueo CORS de Google Apps Script
+//  Los <script> tags no tienen restricciones CORS, a diferencia de fetch
 // ─────────────────────────────────────────────────────────────
-async function api(params) {
-  const url = state.scriptUrl + '?' + new URLSearchParams(params).toString();
-  let res;
-  try {
-    // Fetch simple sin opciones extra — GAS con acceso "Cualquiera" responde CORS automáticamente
-    res = await fetch(url);
-  } catch(netErr) {
-    throw new Error('Error de red: ' + netErr.message + '. Comprueba que la URL del script es correcta y el deploy está activo.');
-  }
-  // GAS a veces devuelve HTML en vez de JSON cuando hay un error interno
-  const text = await res.text();
-  let data;
-  try {
-    data = JSON.parse(text);
-  } catch(e) {
-    // El script devolvió HTML (error de GAS) — mostrar primeras letras para diagnóstico
-    throw new Error('El script no devolvió JSON. Respuesta: ' + text.substring(0, 120));
-  }
-  if (data.error) throw new Error(data.error);
-  return data;
+function api(params) {
+  return new Promise(function(resolve, reject) {
+    // Nombre único para el callback global
+    const cbName = '_cb' + Date.now() + Math.floor(Math.random() * 9999);
+    params.callback = cbName;
+
+    const url = state.scriptUrl + '?' + new URLSearchParams(params).toString();
+
+    // Timeout de 15 segundos
+    const timer = setTimeout(function() {
+      cleanup();
+      reject(new Error('Timeout: el script tardó demasiado en responder'));
+    }, 15000);
+
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    // El script de GAS llamará a esta función con los datos
+    window[cbName] = function(data) {
+      cleanup();
+      if (data && data.error) {
+        reject(new Error(data.error));
+      } else {
+        resolve(data);
+      }
+    };
+
+    const script = document.createElement('script');
+    script.src = url;
+    script.onerror = function() {
+      cleanup();
+      reject(new Error('No se pudo cargar el script. Comprueba la URL y el deploy.'));
+    };
+    document.head.appendChild(script);
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -2081,14 +2100,10 @@ async function saveSetup() {
   if (pin!==pin2){showToast('Los dos PINs no coinciden','error');return;}
   const btn=document.getElementById('btn-setup');
   btn.disabled=true; btn.textContent='Verificando...';
+  state.scriptUrl = url; // necesario antes de llamar a api()
   try {
-    // Ping con opciones CORS explícitas para evitar problemas con redirecciones de GAS
-    const res=await fetch(url+'?action=ping', {
-      credentials: 'omit',
-      redirect: 'follow',
-      cache: 'no-cache'
-    });
-    const data=await res.json();
+    // Ping usando JSONP (mismo mecanismo que el resto de llamadas)
+    const data = await api({ action: 'ping' });
     if (!data.ok) throw new Error('Respuesta inesperada del script');
     localStorage.setItem('scriptUrl',url); localStorage.setItem('nombre1',p1);
     localStorage.setItem('nombre2',p2); localStorage.setItem('appPin',pin);
