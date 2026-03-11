@@ -7,8 +7,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Finanzas del Hogar</title>
 <!-- ── FAVICON ── -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%230D2137'/%3E%3Crect x='9' y='15' width='30' height='20' rx='4' fill='none' stroke='%236AB4F0' stroke-width='2.2'/%3E%3Crect x='9' y='21' width='30' height='5' fill='%236AB4F0' opacity='.35'/%3E%3Crect x='13' y='27' width='8' height='3' rx='1.5' fill='%236AB4F0'/%3E%3Ccircle cx='34' cy='28.5' r='3.5' fill='%236AB4F0'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%230D2137'/%3E%3Crect x='9' y='15' width='30' height='20' rx='4' fill='none' stroke='%236AB4F0' stroke-width='2.2'/%3E%3Crect x='9' y='21' width='30' height='5' fill='%236AB4F0' opacity='.35'/%3E%3Crect x='13' y='27' width='8' height='3' rx='1.5' fill='%236AB4F0'/%3E%3Ccircle cx='34' cy='28.5' r='3.5' fill='%236AB4F0'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='24' fill='%230D2137'/%3E%3Crect x='10' y='17' width='28' height='18' rx='3.5' fill='none' stroke='%236AB4F0' stroke-width='2'/%3E%3Crect x='10' y='22' width='28' height='5' fill='%236AB4F0' opacity='.3'/%3E%3Crect x='14' y='28' width='7' height='3' rx='1.5' fill='%236AB4F0'/%3E%3Ccircle cx='33' cy='29.5' r='3' fill='%236AB4F0'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='24' fill='%230D2137'/%3E%3Crect x='10' y='17' width='28' height='18' rx='3.5' fill='none' stroke='%236AB4F0' stroke-width='2'/%3E%3Crect x='10' y='22' width='28' height='5' fill='%236AB4F0' opacity='.3'/%3E%3Crect x='14' y='28' width='7' height='3' rx='1.5' fill='%236AB4F0'/%3E%3Ccircle cx='33' cy='29.5' r='3' fill='%236AB4F0'/%3E%3C/svg%3E">
 <!-- ── FONTS ── -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1138,41 +1138,32 @@ html, body {
   <div class="pin-brand">
     <div class="pin-logo-wrap"><span class="mi mi-48" style="color:var(--md-on-primary-cont)">account_balance_wallet</span></div>
     <div class="pin-app-name">Finanzas del Hogar</div>
-    <div class="pin-app-sub">Tu economía familiar, bajo control</div>
+    <div class="pin-app-sub" id="pin-app-sub">Tu economía familiar, bajo control</div>
   </div>
+  <div class="pin-subtitle" id="pin-subtitle">Introduce tu PIN</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="dot-0"></div>
+    <div class="pin-dot" id="dot-1"></div>
+    <div class="pin-dot" id="dot-2"></div>
+    <div class="pin-dot" id="dot-3"></div>
+  </div>
+  <div class="pin-pad">
+    <div class="pin-key" onclick="pinPress('1')">1</div>
+    <div class="pin-key" onclick="pinPress('2')">2</div>
+    <div class="pin-key" onclick="pinPress('3')">3</div>
+    <div class="pin-key" onclick="pinPress('4')">4</div>
+    <div class="pin-key" onclick="pinPress('5')">5</div>
+    <div class="pin-key" onclick="pinPress('6')">6</div>
+    <div class="pin-key" onclick="pinPress('7')">7</div>
+    <div class="pin-key" onclick="pinPress('8')">8</div>
+    <div class="pin-key" onclick="pinPress('9')">9</div>
+    <div class="pin-key empty"></div>
+    <div class="pin-key" onclick="pinPress('0')">0</div>
+    <div class="pin-key del" onclick="pinDel()">⌫</div>
+  </div>
+  <div class="pin-error-msg" id="pin-error">PIN incorrecto. Inténtalo de nuevo.</div>
+  <div class="pin-setup-link" id="pin-setup-link" style="display:none">Configurar PIN →</div>
 
-  <!-- PASO 1: Selector de usuario -->
-  <div id="pin-user-select" style="width:100%;padding:0 32px">
-    <div style="font-size:15px;font-weight:600;text-align:center;margin-bottom:16px;color:var(--md-on-surface-var)">¿Quién eres?</div>
-    <div style="display:flex;flex-direction:column;gap:10px" id="pin-user-btns"></div>
-  </div>
-
-  <!-- PASO 2: Teclado PIN -->
-  <div id="pin-pad-section" style="display:none;width:100%">
-    <div class="pin-subtitle" id="pin-subtitle">Introduce tu PIN</div>
-    <div class="pin-dots" id="pin-dots">
-      <div class="pin-dot" id="dot-0"></div>
-      <div class="pin-dot" id="dot-1"></div>
-      <div class="pin-dot" id="dot-2"></div>
-      <div class="pin-dot" id="dot-3"></div>
-    </div>
-    <div class="pin-pad">
-      <div class="pin-key" onclick="pinPress('1')">1</div>
-      <div class="pin-key" onclick="pinPress('2')">2</div>
-      <div class="pin-key" onclick="pinPress('3')">3</div>
-      <div class="pin-key" onclick="pinPress('4')">4</div>
-      <div class="pin-key" onclick="pinPress('5')">5</div>
-      <div class="pin-key" onclick="pinPress('6')">6</div>
-      <div class="pin-key" onclick="pinPress('7')">7</div>
-      <div class="pin-key" onclick="pinPress('8')">8</div>
-      <div class="pin-key" onclick="pinPress('9')">9</div>
-      <div class="pin-key" onclick="pinBack()" style="font-size:13px;color:var(--md-on-surface-var)">← Volver</div>
-      <div class="pin-key" onclick="pinPress('0')">0</div>
-      <div class="pin-key del" onclick="pinDel()">⌫</div>
-    </div>
-    <div class="pin-error-msg" id="pin-error">PIN incorrecto. Inténtalo de nuevo.</div>
-    <div class="pin-setup-link" id="pin-setup-link" style="display:none">Configurar PIN ahora →</div>
-  </div>
 </div>
 
 <!-- ════════ TOP BAR ════════ -->
@@ -1480,21 +1471,28 @@ html, body {
       </div>
       <div class="row-fields">
         <div class="field">
-          <label>PIN (4 dígitos)</label>
-          <input type="number" id="cfg-pin" placeholder="nuevo PIN" min="0" max="9999">
-        </div>
-        <div class="field" style="visibility:hidden"></div>
-      </div>
-      <div class="row-fields">
-        <div class="field">
-          <label>Tu nombre</label>
+          <label>Tu nombre (Persona 1)</label>
           <input type="text" id="cfg-p1" placeholder="ej: Carlos">
         </div>
         <div class="field">
-          <label>Nombre pareja</label>
+          <label>Nombre pareja (Persona 2)</label>
           <input type="text" id="cfg-p2" placeholder="ej: María">
         </div>
       </div>
+
+      <div class="field" style="margin-top:4px">
+        <label>En este dispositivo soy:</label>
+        <div style="display:flex;gap:8px;margin-top:6px" id="yo-soy-pills"></div>
+      </div>
+
+      <div class="field" style="margin-top:4px">
+        <label>PIN de acceso (4 dígitos)</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="number" id="cfg-pin" placeholder="nuevo PIN" min="0" max="9999" style="flex:1">
+          <span style="font-size:12px;color:var(--md-on-surface-var);flex-shrink:0">Cada dispositivo puede tener su propio PIN</span>
+        </div>
+      </div>
+
       <button class="btn btn-primary" onclick="saveSettingsChanges()"><span class="mi mi-18">save</span> Guardar cambios</button>
     </div>
 
@@ -1691,7 +1689,7 @@ const CAT_COLORS = new Proxy({}, { get: (t,p)=>getCatColor(p) });
 
 let state = {
   get scriptUrl() { return cfg('scriptUrl'); },
-  get myName()    { return cfg('miUsuario') || (state.usuarios[0]||{}).nombre || 'Persona 1'; },
+  get myName()    { return localStorage.getItem('miUsuario') || localStorage.getItem('nombre1') || 'Persona 1'; },
   mes:  localStorage.getItem('mes')  || MESES[new Date().getMonth()],
   anio: parseInt(localStorage.getItem('anio')) || new Date().getFullYear(),
   currentView: 'dashboard',
@@ -1703,7 +1701,12 @@ let state = {
 };
 
 // Helpers para usuarios y categorías
-function getUsuariosArr() { return state.usuarios.length ? state.usuarios : [{nombre:'Persona 1'},{nombre:'Persona 2'}]; }
+function getUsuariosArr() {
+  if (state.usuarios && state.usuarios.length) return state.usuarios;
+  const n1 = localStorage.getItem('nombre1') || 'Persona 1';
+  const n2 = localStorage.getItem('nombre2') || 'Persona 2';
+  return [{ nombre: n1 }, { nombre: n2 }];
+}
 function getCategoriasArr() {
   return state.categorias.length ? state.categorias : [
     {nombre:'Alimentación',icono:'restaurant'},{nombre:'Transporte',icono:'directions_car'},
@@ -1718,98 +1721,38 @@ function saveCategorias(arr) { state.categorias=arr; localStorage.setItem('_cate
 
 
 function isConfigured() { return !!localStorage.getItem('configured'); }
-function hasPin()       { return !!(localStorage.getItem('appPin') || '').trim(); }
 
 // ─────────────────────────────────────────────────────────────
-//  PIN LOGIC — Doble PIN por persona
-//  localStorage keys:
-//    pin_p1 / pin_p2  → PIN de cada persona (independiente)
-//    miUsuario        → nombre de quien usó la app por última vez
+//  PIN LOGIC — PIN único por dispositivo
+//  localStorage: appPin, miUsuario
 // ─────────────────────────────────────────────────────────────
 let pinBuffer = '';
-let _pinMode = 'unlock';   // 'unlock' | 'setup_new1' | 'setup_new2' | 'change_new1' | 'change_new2'
-let _pinFirstEntry = '';
-let _pinTargetUser = '';   // nombre de la persona cuyo PIN se está comprobando/configurando
-let _pinChangeCallback = null;
+// ─────────────────────────────────────────────────────────────
+//  PIN LOGIC — PIN único por dispositivo
+//  localStorage: appPin, miUsuario
+// ─────────────────────────────────────────────────────────────
+let _pinMode = 'unlock'; // 'unlock' | 'change1' | 'change2'
+let _pinFirst = '';
 
-function _pinKeyForUser(nombre) {
-  // Clave basada en el nombre, con fallback legacy para Persona 1/2
-  const n1 = localStorage.getItem('nombre1') || 'Persona 1';
-  const n2 = localStorage.getItem('nombre2') || 'Persona 2';
-  if (nombre === n1) return localStorage.getItem('pin_p1') ? 'pin_p1' : 'pin_'+nombre.replace(/\s+/g,'_');
-  if (nombre === n2) return localStorage.getItem('pin_p2') ? 'pin_p2' : 'pin_'+nombre.replace(/\s+/g,'_');
-  return 'pin_' + nombre.replace(/\s+/g,'_');
-}
-function _pinForUser(nombre) {
-  return localStorage.getItem(_pinKeyForUser(nombre)) || '';
-}
-function hasPin() {
-  // Al menos una persona tiene PIN configurado
-  return !!(localStorage.getItem('pin_p1') || localStorage.getItem('pin_p2') ||
-            localStorage.getItem('appPin')); // backward compat
-}
+function hasPin() { const p=localStorage.getItem('appPin')||''; return /^\d{4}$/.test(p.trim()); }
 
-// ── Inicializar pantalla PIN (paso 1: selector de usuario) ──
 function initPin() {
-  pinBuffer = ''; _pinMode = 'unlock'; _pinTargetUser = '';
-  _showUserSelect();
-}
-
-function _showUserSelect() {
-  document.getElementById('pin-user-select').style.display = '';
-  document.getElementById('pin-pad-section').style.display = 'none';
-  pinBuffer = '';
-  const n1 = localStorage.getItem('nombre1') || 'Persona 1';
-  const n2 = localStorage.getItem('nombre2') || 'Persona 2';
-  const container = document.getElementById('pin-user-btns');
-  const usuarios = getUsuariosArr();
-  container.innerHTML = usuarios.map(u => {
-    const pinKey = 'pin_' + u.nombre.replace(/\s+/g,'_');
-    const hasPin = !!localStorage.getItem(pinKey) || (u.nombre===localStorage.getItem('nombre1')&&!!localStorage.getItem('pin_p1'));
-    return `<button onclick="selectUserAndPin('${u.nombre}')" style="
-      width:100%;padding:16px;border-radius:18px;border:2px solid var(--md-outline-var);
-      background:var(--md-sc-high);color:var(--md-on-surface);
-      font-family:'Nunito',sans-serif;font-weight:700;font-size:16px;
-      cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s">
-      <span class="mi mi-28" style="color:var(--md-primary)">person</span>
-      <span>${u.nombre}</span>
-      ${hasPin?'':'<span style="font-size:11px;color:var(--md-warning);font-weight:400">Configurar PIN</span>'}
-      <span class="mi mi-20" style="margin-left:auto;color:var(--md-outline)">chevron_right</span>
-    </button>`;
-  }).join('');
-  // Auto-seleccionar si solo 1 usuario tiene PIN
-  const withPin = usuarios.filter(u => !!localStorage.getItem('pin_'+u.nombre.replace(/\s+/g,'_')));
-  if (withPin.length===1 && usuarios.length>1) selectUserAndPin(withPin[0].nombre);
-}
-
-function selectUserAndPin(nombre) {
-  _pinTargetUser = nombre;
-  document.getElementById('pin-user-select').style.display = 'none';
-  document.getElementById('pin-pad-section').style.display = '';
+  pinBuffer = ''; _pinMode = 'unlock'; _pinFirst = '';
   document.getElementById('pin-setup-link').style.display = 'none';
-
-  const hasUserPin = !!_pinForUser(nombre);
-  if (!hasUserPin) {
-    // Primera vez — configurar PIN
-    _pinMode = 'setup_new1';
-    document.getElementById('pin-subtitle').textContent = nombre + ': elige tu PIN';
-  } else {
-    _pinMode = 'unlock';
-    document.getElementById('pin-subtitle').textContent = 'Hola, ' + nombre + ' — tu PIN';
-  }
-  pinBuffer = ''; renderDots();
-}
-
-function pinBack() {
-  _pinMode = 'unlock'; _pinTargetUser = ''; pinBuffer = '';
-  _showUserSelect();
+  // Mostrar nombre del usuario si está configurado
+  const yo = localStorage.getItem('miUsuario');
+  const sub = document.getElementById('pin-app-sub');
+  if (yo && sub) sub.textContent = 'Hola, ' + yo + ' 👋';
+  else if (sub) sub.textContent = 'Tu economía familiar, bajo control';
+  document.getElementById('pin-subtitle').textContent = 'Introduce tu PIN';
+  renderDots();
 }
 
 function pinPress(digit) {
-  if (window._pinOverride) return; // modo override activo
+  if (window._pinOverride) { window._pinOverride(digit); return; }
   if (pinBuffer.length >= 4) return;
   pinBuffer += digit; renderDots();
-  if (pinBuffer.length === 4) setTimeout(_handlePinEntry, 120);
+  if (pinBuffer.length === 4) setTimeout(_checkPin, 120);
 }
 function pinDel() {
   pinBuffer = pinBuffer.slice(0,-1); renderDots();
@@ -1823,42 +1766,28 @@ function renderDots() {
   }
 }
 
-function _handlePinEntry() {
+function _checkPin() {
   if (_pinMode === 'unlock') {
-    // Comprobar PIN (con fallback a appPin legacy)
-    const stored = _pinForUser(_pinTargetUser) || localStorage.getItem('appPin') || '';
+    const stored = localStorage.getItem('appPin') || '';
     if (pinBuffer === stored) {
-      localStorage.setItem('miUsuario', _pinTargetUser);
-      updatePersonaSelects();
       const ps = document.getElementById('pin-screen');
       ps.classList.add('fade-out');
       setTimeout(() => { ps.classList.add('hidden'); ps.classList.remove('fade-out'); showView('dashboard'); loadSettings(); }, 300);
-    } else {
-      showPinError();
-    }
-  } else if (_pinMode === 'setup_new1' || _pinMode === 'change_new1') {
-    _pinFirstEntry = pinBuffer; pinBuffer = ''; _pinMode = _pinMode.replace('new1','new2');
-    document.getElementById('pin-subtitle').textContent = 'Repite el PIN';
+    } else { showPinError(); }
+  } else if (_pinMode === 'change1') {
+    _pinFirst = pinBuffer; pinBuffer = ''; _pinMode = 'change2';
+    document.getElementById('pin-subtitle').textContent = 'Repite el nuevo PIN';
     renderDots();
-  } else if (_pinMode === 'setup_new2' || _pinMode === 'change_new2') {
-    if (pinBuffer === _pinFirstEntry) {
-      localStorage.setItem(_pinKeyForUser(_pinTargetUser), pinBuffer);
-      if (_pinMode === 'setup_new2') {
-        // Primera configuración — continuar al unlock normal
-        _pinMode = 'unlock'; pinBuffer = '';
-        document.getElementById('pin-subtitle').textContent = 'PIN guardado — introdúcelo de nuevo';
-        renderDots();
-        showToast('PIN de ' + _pinTargetUser + ' configurado ✓','success');
-      } else {
-        // Cambio de PIN desde ajustes
-        document.getElementById('pin-screen').classList.add('hidden');
-        showToast('PIN de ' + _pinTargetUser + ' actualizado ✓','success');
-        if (_pinChangeCallback) { _pinChangeCallback(); _pinChangeCallback = null; }
-      }
+  } else if (_pinMode === 'change2') {
+    if (pinBuffer === _pinFirst) {
+      localStorage.setItem('appPin', pinBuffer);
+      document.getElementById('pin-screen').classList.add('hidden');
+      showToast('PIN actualizado correctamente ✓', 'success');
+      initPin();
     } else {
       showPinError('Los PINs no coinciden. Inténtalo de nuevo.');
-      _pinMode = _pinMode.replace('new2','new1'); _pinFirstEntry = '';
-      setTimeout(()=>{ document.getElementById('pin-subtitle').textContent='Elige tu PIN de nuevo'; },950);
+      _pinMode = 'change1'; _pinFirst = '';
+      setTimeout(()=>{ document.getElementById('pin-subtitle').textContent='Elige un nuevo PIN'; }, 950);
     }
   }
 }
@@ -1870,25 +1799,16 @@ function showPinError(msg) {
   for (let i=0;i<4;i++) document.getElementById('dot-'+i).classList.add('error');
   setTimeout(() => { pinBuffer=''; renderDots(); err.classList.remove('show'); }, 900);
 }
-function unlockApp() {
-  document.getElementById('pin-screen').classList.add('hidden');
-  showView('dashboard'); loadSettings();
-}
+function unlockApp() { document.getElementById('pin-screen').classList.add('hidden'); showView('dashboard'); loadSettings(); }
+
 function showPinSetup() {}
 
 // ── Cambiar PIN desde Ajustes ──
 function changePinFromSettings() {
-  const n1 = localStorage.getItem('nombre1') || 'Persona 1';
-  const n2 = localStorage.getItem('nombre2') || 'Persona 2';
-  // Mostrar selector de qué persona cambia el PIN
-  const choice = confirm('¿Cambiar PIN de ' + n1 + '?\nPulsa Cancelar para cambiar el de ' + n2);
-  _pinTargetUser = choice ? n1 : n2;
-  _pinMode = 'change_new1'; _pinFirstEntry = ''; pinBuffer = '';
+  _pinMode = 'change1'; _pinFirst = ''; pinBuffer = '';
   const screen = document.getElementById('pin-screen');
   screen.classList.remove('hidden');
-  document.getElementById('pin-user-select').style.display = 'none';
-  document.getElementById('pin-pad-section').style.display = '';
-  document.getElementById('pin-subtitle').textContent = _pinTargetUser + ': elige nuevo PIN';
+  document.getElementById('pin-subtitle').textContent = 'Elige un nuevo PIN';
   renderDots();
 }
 function _pinChangeMode() { changePinFromSettings(); }
@@ -1911,15 +1831,21 @@ function bootApp() {
     document.getElementById('pin-screen').classList.add('hidden');
     showViewRaw('setup'); return;
   }
-  // Intentar sincronizar usuarios y categorías en background
+  // Si no hay PIN configurado, entrar directamente
+  if (!hasPin()) {
+    document.getElementById('pin-screen').classList.add('hidden');
+    showView('dashboard'); loadSettings();
+  } else {
+    document.getElementById('pin-screen').classList.remove('hidden');
+    initPin();
+  }
+  // Sincronizar usuarios/categorías en background
   if (state.scriptUrl) {
     Promise.all([
-      api({action:'getUsuarios'}).then(d=>{ if(d.ok&&d.data) saveUsuarios(d.data); }).catch(()=>{}),
-      api({action:'getCategorias'}).then(d=>{ if(d.ok&&d.data) saveCategorias(d.data); }).catch(()=>{})
-    ]).finally(()=>{ updatePersonaSelects(); updateCatSelects(); });
+      api({action:'getUsuarios'}).then(d=>{ if(d.ok&&d.data&&d.data.length){ saveUsuarios(d.data); updatePersonaSelects(); } }).catch(()=>{}),
+      api({action:'getCategorias'}).then(d=>{ if(d.ok&&d.data&&d.data.length){ saveCategorias(d.data); updateCatSelects(); } }).catch(()=>{})
+    ]);
   }
-  document.getElementById('pin-screen').classList.remove('hidden');
-  initPin();
 }
 
 function populateSelects() {
@@ -2116,9 +2042,10 @@ async function loadDiarios() {
 }
 function renderDiarios(items) {
   if (!items.length) return `<div class="empty"><div style="margin-bottom:12px"><span class="mi mi-40" style="color:var(--md-outline)">shopping_cart</span></div><p>Sin gastos en ${state.mes} ${state.anio}.<br>Usa el botón <strong>＋</strong> para añadir.</p></div>`;
+  window._diariosCache = items;
   const fmt=n=>(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
   const total=items.reduce((s,i)=>s+(i.importe||0),0);
-  const list=items.map(item=>{
+  const list=items.map((item,idx)=>{
     const color=CAT_COLORS[item.categoria]||'var(--cat-other)';
     const dot=item.quien===state.myName?'<span class="mi mi-16" style="color:var(--cat-food)">person</span>':item.quien===state.p2Name?'<span class="mi mi-16" style="color:var(--cat-health)">person</span>':'<span class="mi mi-16" style="color:var(--md-on-surface-var)">group</span>';
     return `<div class="expense-item" style="gap:8px">
@@ -2129,8 +2056,8 @@ function renderDiarios(items) {
       </div>
       <div class="expense-amount neg" style="flex-shrink:0">${fmt(item.importe)}</div>
       <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
-        <button onclick="openEditDiario(${JSON.stringify(item).replace(/'/g,'\\'')})" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-on-surface-var)" title="Editar"><span class="mi mi-18">edit</span></button>
-        <button onclick="deleteItem('diarios',${item.fila},'${(item.descripcion||'').replace(/'/g,'')}')" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)" title="Eliminar"><span class="mi mi-18">delete</span></button>
+        <button onclick="openEditDiario(_diariosCache[${idx}])" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-on-surface-var)" title="Editar"><span class="mi mi-18">edit</span></button>
+        <button onclick="deleteItem('diarios',${item.fila},this)" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)" title="Eliminar"><span class="mi mi-18">delete</span></button>
       </div>
     </div>`;
   }).join('');
@@ -2155,7 +2082,8 @@ function renderMore(recurrentes,ingresos) {
   const fmt=n=>(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
   const activos=recurrentes.filter(r=>r.activo==='✅');
   const totalRec=activos.reduce((s,r)=>s+(r.importe||0),0);
-  const recList=recurrentes.map(r=>{
+  window._recurrentesCache = recurrentes;
+  const recList=recurrentes.map((r,recIdx)=>{
     const isOn=r.activo==='✅';
     const color=CAT_COLORS[r.categoria]||'var(--cat-other)';
     return `<div class="rec-item" style="gap:6px">
@@ -2165,20 +2093,21 @@ function renderMore(recurrentes,ingresos) {
       <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;flex-shrink:0;color:${isOn?'var(--md-on-surface)':'var(--md-on-surface-var)'}">${fmt(r.importe)}</div>
       <div class="md-switch ${isOn?'on':''}" onclick="toggleRec(${r.fila},'${isOn?'⏸️':'✅'}',this)" style="flex-shrink:0"></div>
       <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
-        <button onclick="openEditRecurrente(${JSON.stringify(r).replace(/'/g,'\\'')})" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-on-surface-var)" title="Editar"><span class="mi mi-18">edit</span></button>
-        <button onclick="deleteItem('recurrentes',${r.fila},'${(r.nombre||'').replace(/'/g,'')}')" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)" title="Eliminar"><span class="mi mi-18">delete</span></button>
+        <button onclick="openEditRecurrente(_recurrentesCache[${recIdx}])" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-on-surface-var)" title="Editar"><span class="mi mi-18">edit</span></button>
+        <button onclick="deleteItem('recurrentes',${r.fila},this)" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)" title="Eliminar"><span class="mi mi-18">delete</span></button>
       </div>
     </div>`;
   }).join('');
-  const ingList=ingresos.length?ingresos.map(i=>`
+  window._ingresosCache = ingresos;
+  const ingList=ingresos.length?ingresos.map((i,ingIdx)=>`
     <div class="expense-item" style="gap:8px">
       <div class="expense-icon" style="background:color-mix(in srgb,var(--cat-food) 18%,transparent);color:var(--cat-food)"><span class="mi mi-outline" style="font-size:22px">payments</span></div>
       <div class="expense-info" style="flex:1;min-width:0"><div class="expense-desc">${i.concepto||'—'}</div>
       <div class="expense-meta">${i.persona||''} · ${i.mes||''} ${i.anio||''}</div></div>
       <div class="expense-amount pos" style="flex-shrink:0">${fmt(i.importe)}</div>
       <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
-        <button onclick="openEditIngreso(${JSON.stringify(i).replace(/'/g,'\\'')})" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-on-surface-var)" title="Editar"><span class="mi mi-18">edit</span></button>
-        <button onclick="deleteItem('ingresos',${i.fila},'${(i.concepto||'').replace(/'/g,'')}')" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)" title="Eliminar"><span class="mi mi-18">delete</span></button>
+        <button onclick="openEditIngreso(_ingresosCache[${ingIdx}])" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-on-surface-var)" title="Editar"><span class="mi mi-18">edit</span></button>
+        <button onclick="deleteItem('ingresos',${i.fila},this)" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)" title="Eliminar"><span class="mi mi-18">delete</span></button>
       </div>
     </div>`).join(''):'<div class="empty"><p>Sin ingresos este mes</p></div>';
   return `<div class="section-title"><span class="mi mi-18">autorenew</span> Gastos Recurrentes</div>
@@ -2294,8 +2223,7 @@ async function saveSetup() {
     const quien2 = document.getElementById('setup-quien')?.value || p1;
     localStorage.setItem('scriptUrl',url); localStorage.setItem('nombre1',p1);
     localStorage.setItem('nombre2',p2);
-    const _pinKey2 = quien2 === p1 ? 'pin_p1' : 'pin_p2';
-    localStorage.setItem(_pinKey2, pin);
+    localStorage.setItem('appPin', pin);
     localStorage.setItem('miUsuario', quien2);
     localStorage.setItem('configured','1');
     updatePersonaSelects();
@@ -2307,8 +2235,7 @@ async function saveSetup() {
       const quien3 = document.getElementById('setup-quien')?.value || p1;
       localStorage.setItem('scriptUrl',url); localStorage.setItem('nombre1',p1);
       localStorage.setItem('nombre2',p2);
-      const _pinKey3 = quien3 === p1 ? 'pin_p1' : 'pin_p2';
-      localStorage.setItem(_pinKey3, pin);
+      localStorage.setItem('appPin', pin);
       localStorage.setItem('miUsuario', quien3);
       localStorage.setItem('configured','1');
       updatePersonaSelects();
@@ -2327,7 +2254,7 @@ async function saveSetup() {
 const RK_MAGIC='HFR1:';
 function exportRecoveryKey() {
   if (!isConfigured()){showToast('Configura la app primero','error');return;}
-  const payload={v:2,p1:localStorage.getItem('pin_p1')||localStorage.getItem('appPin')||'',p2:localStorage.getItem('pin_p2')||'',u:localStorage.getItem('scriptUrl')||'',n1:localStorage.getItem('nombre1')||'Persona 1',n2:localStorage.getItem('nombre2')||'Persona 2',ts:new Date().toISOString().slice(0,10)};
+  const payload={v:3,pin:localStorage.getItem('appPin')||'',yo:localStorage.getItem('miUsuario')||'',u:localStorage.getItem('scriptUrl')||'',n1:localStorage.getItem('nombre1')||'Persona 1',n2:localStorage.getItem('nombre2')||'Persona 2',ts:new Date().toISOString().slice(0,10)};
   const encoded=RK_MAGIC+btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
   const blob=new Blob([encoded],{type:'text/plain'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hogar_recovery_key.txt'; a.click(); URL.revokeObjectURL(a.href);
@@ -2355,12 +2282,12 @@ function importRecoveryKeySetup(input) {
 function applyRecoveryKeySetup() {
   const d=_setupRecoveryData; if (!d) return;
   localStorage.setItem('scriptUrl',d.u||'');
-  if (d.p1) localStorage.setItem('pin_p1',d.p1); else if (d.p) localStorage.setItem('pin_p1',d.p);
-  if (d.p2) localStorage.setItem('pin_p2',d.p2);
+  localStorage.setItem('appPin', d.pin||d.p1||d.p||'');
+  if (d.yo) localStorage.setItem('miUsuario',d.yo);
   localStorage.setItem('nombre1',d.n1||'Persona 1'); localStorage.setItem('nombre2',d.n2||'Persona 2');
   localStorage.setItem('configured','1'); updatePersonaSelects();
-  showToast('Cuenta restaurada — configura tu PIN ✓','success');
-  setTimeout(()=>{showView('dashboard');loadSettings();},800);
+  showToast('Cuenta restaurada ✓','success');
+  setTimeout(()=>{document.getElementById('pin-screen').classList.add('hidden');showView('dashboard');loadSettings();},800);
 }
 let _settingsRecoveryData=null;
 function importRecoveryKey(input) {
@@ -2373,8 +2300,8 @@ function importRecoveryKey(input) {
 function applyRecoveryKey() {
   const d=_settingsRecoveryData; if (!d) return;
   localStorage.setItem('scriptUrl',d.u||'');
-  if (d.p1) localStorage.setItem('pin_p1',d.p1); else if (d.p) localStorage.setItem('pin_p1',d.p);
-  if (d.p2) localStorage.setItem('pin_p2',d.p2);
+  localStorage.setItem('appPin', d.pin||d.p1||d.p||'');
+  if (d.yo) localStorage.setItem('miUsuario',d.yo);
   localStorage.setItem('nombre1',d.n1||'Persona 1'); localStorage.setItem('nombre2',d.n2||'Persona 2');
   localStorage.setItem('configured','1'); updatePersonaSelects(); loadSettings();
   showToast('Configuración restaurada ✓','success');
@@ -2389,29 +2316,23 @@ function loadSettings() {
   urlEl.textContent=url?'...'+url.slice(-28):'⚠️ No configurada';
   document.getElementById('settings-name-display').textContent=localStorage.getItem('nombre1')||'—';
   document.getElementById('settings-p2-display').textContent=localStorage.getItem('nombre2')||'—';
-  // Renderizar selector de usuario
-  const yoSoyContainer = document.getElementById('yo-soy-pills');
-  if (yoSoyContainer) {
+
+  // Píldoras "Soy yo"
+  const yoSoy = document.getElementById('yo-soy-pills');
+  if (yoSoy) {
     const n1 = localStorage.getItem('nombre1')||'Persona 1';
     const n2 = localStorage.getItem('nombre2')||'Persona 2';
     const yo = localStorage.getItem('miUsuario')||n1;
-    yoSoyContainer.innerHTML = [n1, n2].map(n =>
-      `<button onclick="setMiUsuario('${n}')" style="padding:6px 16px;border-radius:20px;border:2px solid ${n===yo?'var(--md-primary)':'var(--md-outline-var)'};background:${n===yo?'var(--md-primary-container)':'transparent'};color:${n===yo?'var(--md-on-primary-cont)':'var(--md-on-surface)'};font-weight:${n===yo?'700':'400'};cursor:pointer;font-size:14px;transition:all .2s">${n}</button>`
+    yoSoy.innerHTML = [n1, n2].map(n =>
+      `<button onclick="setMiUsuario('${n}')" style="padding:8px 20px;border-radius:20px;border:2px solid ${n===yo?'var(--md-primary)':'var(--md-outline-var)'};background:${n===yo?'var(--md-primary-container)':'transparent'};color:${n===yo?'var(--md-on-primary-cont)':'var(--md-on-surface)'};font-family:'Nunito',sans-serif;font-weight:${n===yo?'700':'500'};cursor:pointer;font-size:14px;transition:all .2s">${n=== yo?'✓ ':'' }${n}</button>`
     ).join('');
   }
-  // Actualizar nombres en botones de PIN
-  const n1d = localStorage.getItem('nombre1') || 'Persona 1';
-  const n2d = localStorage.getItem('nombre2') || 'Persona 2';
-  const b1 = document.getElementById('btn-change-pin-1');
-  const b2 = document.getElementById('btn-change-pin-2');
-  if (b1) b1.innerHTML = '<span class="mi mi-18">lock</span> PIN ' + n1d + (localStorage.getItem('pin_p1') ? ' ✓' : ' ⚠️');
-  if (b2) b2.innerHTML = '<span class="mi mi-18">lock</span> PIN ' + n2d + (localStorage.getItem('pin_p2') ? ' ✓' : ' ⚠️');
+
   document.getElementById('cfg-url').value=url;
-  // Render categories list
-  _renderSettingsCats();
   document.getElementById('cfg-pin').value='';
   document.getElementById('cfg-p1').value=localStorage.getItem('nombre1')||'';
   document.getElementById('cfg-p2').value=localStorage.getItem('nombre2')||'';
+  _renderSettingsCats();
 }
 function saveSettingsChanges() {
   const url=document.getElementById('cfg-url').value.trim();
@@ -2423,6 +2344,7 @@ function saveSettingsChanges() {
   if (pin) localStorage.setItem('appPin',pin);
   if (p1)  localStorage.setItem('nombre1',p1);
   if (p2)  localStorage.setItem('nombre2',p2);
+  // miUsuario se guarda via setMiUsuario al pulsar la píldora — no sobreescribir si no se tocó
   updatePersonaSelects(); loadSettings();
   showToast('Cambios guardados ✓','success');
 }
@@ -2638,8 +2560,9 @@ async function saveEdit() {
   }
 }
 
-async function deleteItem(sheet, fila, desc) {
-  if (!confirm(`¿Eliminar "${desc}"?`)) return;
+async function deleteItem(sheet, fila, btn) {
+  const desc = btn.closest('.expense-item')?.querySelector('.expense-desc,.rec-name')?.textContent || 'este elemento';
+  if (!confirm('¿Eliminar "' + desc + '"?')) return;
   try {
     await api({ action: 'deleteRow', sheet, fila });
     showToast('Eliminado ✓', 'success');
