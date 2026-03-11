@@ -1835,10 +1835,23 @@ function showView(name) {
 //  API
 // ─────────────────────────────────────────────────────────────
 async function api(params) {
-  const url = state.scriptUrl+'?'+new URLSearchParams(params).toString();
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('HTTP '+res.status);
-  const data = await res.json();
+  const url = state.scriptUrl + '?' + new URLSearchParams(params).toString();
+  let res;
+  try {
+    // Fetch simple sin opciones extra — GAS con acceso "Cualquiera" responde CORS automáticamente
+    res = await fetch(url);
+  } catch(netErr) {
+    throw new Error('Error de red: ' + netErr.message + '. Comprueba que la URL del script es correcta y el deploy está activo.');
+  }
+  // GAS a veces devuelve HTML en vez de JSON cuando hay un error interno
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch(e) {
+    // El script devolvió HTML (error de GAS) — mostrar primeras letras para diagnóstico
+    throw new Error('El script no devolvió JSON. Respuesta: ' + text.substring(0, 120));
+  }
   if (data.error) throw new Error(data.error);
   return data;
 }
@@ -2063,14 +2076,20 @@ async function saveSetup() {
   const pin=String(document.getElementById('setup-pin').value||'').trim();
   const pin2=String(document.getElementById('setup-pin2').value||'').trim();
   if (!url){showToast('Introduce la URL del Apps Script','error');return;}
+  if (!url.includes('script.google.com')){showToast('La URL no parece válida','error');return;}
   if (!pin||pin.length!==4||!/^\d{4}$/.test(pin)){showToast('El PIN debe tener 4 dígitos','error');return;}
   if (pin!==pin2){showToast('Los dos PINs no coinciden','error');return;}
   const btn=document.getElementById('btn-setup');
   btn.disabled=true; btn.textContent='Verificando...';
   try {
-    const res=await fetch(url+'?action=ping');
+    // Ping con opciones CORS explícitas para evitar problemas con redirecciones de GAS
+    const res=await fetch(url+'?action=ping', {
+      credentials: 'omit',
+      redirect: 'follow',
+      cache: 'no-cache'
+    });
     const data=await res.json();
-    if (!data.ok) throw new Error('Respuesta inesperada');
+    if (!data.ok) throw new Error('Respuesta inesperada del script');
     localStorage.setItem('scriptUrl',url); localStorage.setItem('nombre1',p1);
     localStorage.setItem('nombre2',p2); localStorage.setItem('appPin',pin);
     localStorage.setItem('configured','1');
@@ -2078,8 +2097,18 @@ async function saveSetup() {
     showToast('Conectado y configurado ✓','success');
     setTimeout(()=>{document.getElementById('pin-screen').classList.add('hidden');showView('dashboard');loadSettings();},700);
   } catch(e){
-    showToast('No se pudo conectar. Revisa la URL.','error');
-    btn.disabled=false; btn.textContent='Conectar y empezar →';
+    // Si falla el ping pero la URL parece correcta, guardar igualmente y dejar que el dashboard lo confirme
+    if (url.includes('script.google.com') && url.includes('/exec')) {
+      localStorage.setItem('scriptUrl',url); localStorage.setItem('nombre1',p1);
+      localStorage.setItem('nombre2',p2); localStorage.setItem('appPin',pin);
+      localStorage.setItem('configured','1');
+      updatePersonaSelects();
+      showToast('Configuración guardada — verifica al cargar','success');
+      setTimeout(()=>{document.getElementById('pin-screen').classList.add('hidden');showView('dashboard');loadSettings();},700);
+    } else {
+      showToast('URL no válida: ' + e.message,'error');
+      btn.disabled=false; btn.textContent='Conectar y empezar →';
+    }
   }
 }
 
@@ -2211,7 +2240,37 @@ function refreshData() {
 //  UTILS
 // ─────────────────────────────────────────────────────────────
 function formatDate(iso){if(!iso)return'';const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`;}
-function renderError(e){return`<div class="card" style="text-align:center;padding:32px"><div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-weight:700;margin-bottom:8px">Error de conexión</div><div style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:18px">${e.message}</div><button class="btn btn-tonal" onclick="refreshData()">Reintentar</button></div>`;}
+function renderError(e) {
+  const msg = e.message || String(e);
+  // Detectar tipo de error para dar pista útil
+  let hint = '';
+  if (msg.includes('Failed to fetch') || msg.includes('Error de red')) {
+    hint = '<div style="font-size:12px;background:var(--md-sc-high);border-radius:10px;padding:10px;margin-bottom:14px;text-align:left;line-height:1.6">' +
+      '<strong>Posibles causas:</strong><br>' +
+      '1. La URL del script no es correcta<br>' +
+      '2. El deploy no tiene acceso "Cualquiera"<br>' +
+      '3. El script necesita una nueva implementación' +
+      '</div>';
+  } else if (msg.includes('no devolvió JSON') || msg.includes('<!DOCTYPE')) {
+    hint = '<div style="font-size:12px;background:var(--md-sc-high);border-radius:10px;padding:10px;margin-bottom:14px;text-align:left;line-height:1.6">' +
+      '<strong>El script tiene un error interno.</strong><br>' +
+      'Abre script.google.com y comprueba los logs de ejecución.' +
+      '</div>';
+  } else if (msg.includes('Pestaña no encontrada')) {
+    hint = '<div style="font-size:12px;background:var(--md-sc-high);border-radius:10px;padding:10px;margin-bottom:14px;text-align:left;line-height:1.6">' +
+      '<strong>Nombre de pestaña no reconocido en el Sheet.</strong><br>' +
+      msg + '</div>';
+  }
+  return `<div class="card" style="padding:28px">
+    <div style="text-align:center;margin-bottom:16px">
+      <span class="mi mi-40" style="color:var(--md-warning)">warning</span>
+      <div style="font-weight:700;font-size:15px;margin-top:8px">Error de conexión</div>
+    </div>
+    ${hint}
+    <div style="font-size:12px;color:var(--md-on-surface-var);margin-bottom:16px;word-break:break-word;background:var(--md-sc-high);padding:10px;border-radius:10px;font-family:monospace">${msg}</div>
+    <button class="btn btn-tonal" onclick="refreshData()">Reintentar</button>
+  </div>`;
+}
 let toastTimer;
 function showToast(msg,type){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+(type||'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.className='toast',3200);}
 </script>
