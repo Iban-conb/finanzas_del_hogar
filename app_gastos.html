@@ -891,15 +891,15 @@ html, body {
 
 /* ── FILE DROP ── */
 .file-drop {
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; min-height: 68px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 100%; min-height: 80px; gap: 4px;
   border: 2px dashed var(--md-outline-var);
   border-radius: 16px;
   background: var(--md-sc-high);
   cursor: pointer;
   font-size: 13px; color: var(--md-on-surface-var);
-  text-align: center; padding: 14px;
-  transition: all .2s; font-weight: 500;
+  text-align: center; padding: 16px 14px;
+  transition: all .2s; font-weight: 500; box-sizing: border-box;
 }
 .file-drop:hover { border-color: var(--md-primary); color: var(--md-primary); }
 
@@ -1196,12 +1196,10 @@ html, body {
       <div class="setup-tab" id="setup-tab-recover" onclick="switchSetupTab('recover')"><span class="mi mi-16">key</span> Recuperar cuenta</div>
     </div>
 
-    <!-- Nueva configuración -->
-    <div id="setup-panel-new">
+    <!-- PASO 1: URL -->
+    <div id="setup-step-1">
       <div class="card">
-        <div class="card-header">
-          <div><div class="card-title"><span class="mi mi-18">link</span> Conectar Google Sheets</div></div>
-        </div>
+        <div class="card-header"><div class="card-title"><span class="mi mi-18">link</span> Conectar Google Sheets</div></div>
         <div class="setup-steps">
           <div class="setup-step"><div class="step-num">1</div><div>Ve a <strong>script.google.com</strong> → nuevo proyecto → pega el <code>Code.gs</code></div></div>
           <div class="setup-step"><div class="step-num">2</div><div>Pon el ID de tu Google Sheet en <code>SHEET_ID</code></div></div>
@@ -1212,41 +1210,35 @@ html, body {
           <label>URL de Google Apps Script</label>
           <input type="text" id="setup-url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
         </div>
+        <button class="btn btn-primary" id="btn-conectar" onclick="setupConnect()">
+          <span class="mi mi-18">cloud_download</span> Conectar y descargar datos
+        </button>
       </div>
+    </div>
 
+    <!-- PASO 2: Usuario + PIN (aparece tras conectar) -->
+    <div id="setup-step-2" style="display:none">
       <div class="card">
-        <div class="card-header"><div class="card-title"><span class="mi mi-18">group</span> Vuestros nombres</div></div>
-        <div class="row-fields">
-          <div class="field">
-            <label>Tu nombre</label>
-            <input type="text" id="setup-p1" placeholder="ej: Carlos">
-          </div>
-          <div class="field">
-            <label>Pareja</label>
-            <input type="text" id="setup-p2" placeholder="ej: María">
-          </div>
-        </div>
+        <div class="card-header"><div class="card-title"><span class="mi mi-18">person</span> ¿Quién eres en este dispositivo?</div></div>
+        <p style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:14px">Selecciona tu nombre. Cada persona lo hace en su propio móvil.</p>
+        <div id="setup-usuarios-btns" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
       </div>
-
       <div class="card">
         <div class="card-header"><div class="card-title"><span class="mi mi-18">lock</span> PIN de acceso</div></div>
-        <p style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:14px;line-height:1.5">Elige un PIN de 4 dígitos. Sin él no podrás entrar.</p>
+        <p style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:14px;line-height:1.5">Elige un PIN de 4 dígitos para proteger la app en este dispositivo. Puedes dejarlo en blanco y configurarlo después.</p>
         <div class="row-fields">
           <div class="field">
             <label>PIN (4 dígitos)</label>
-            <input type="number" id="setup-pin" placeholder="ej: 4829" min="0" max="9999">
+            <input type="number" id="setup-pin" placeholder="opcional" min="0" max="9999">
           </div>
           <div class="field">
             <label>Repetir PIN</label>
             <input type="number" id="setup-pin2" placeholder="repite" min="0" max="9999">
           </div>
         </div>
-        <div class="field-group" id="setup-quien-group" style="display:none">
-          <label class="field-label">¿Quién eres tú en este dispositivo?</label>
-          <select class="field-input" id="setup-quien"><option value="">— Selecciona —</option></select>
-          <div style="font-size:12px;color:var(--md-on-surface-var);margin-top:4px">Cada persona lo configura en su propio móvil</div>
-        </div>
-        <button class="btn btn-primary" id="btn-setup" onclick="saveSetup()">Conectar y empezar →</button>
+        <button class="btn btn-primary" id="btn-setup" onclick="saveSetup()">
+          <span class="mi mi-18">check_circle</span> Guardar y entrar
+        </button>
       </div>
     </div>
 
@@ -1255,7 +1247,7 @@ html, body {
       <div class="card">
         <div class="card-header"><div class="card-title"><span class="mi mi-18">key</span> Restaurar desde llave</div></div>
         <p style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:16px;line-height:1.6">
-          Carga el archivo <strong>hogar_recovery_key.txt</strong> para recuperar tu URL, PIN y nombres al instante.
+          Carga el archivo <strong>hogar_recovery_key.txt</strong> para recuperar tu configuración al instante.
         </p>
         <div class="field">
           <label>Selecciona tu archivo .txt</label>
@@ -1309,12 +1301,7 @@ html, body {
         </div>
         <div class="field">
           <label>Categoría</label>
-          <select id="d-cat">
-            <option>Alimentación</option><option>Transporte</option>
-            <option>Ocio</option><option>Salud</option>
-            <option>Ropa</option><option>Tecnología</option>
-            <option>Hogar</option><option>Suministros</option><option>Otros</option>
-          </select>
+          <select id="d-cat"><option>Cargando...</option></select>
         </div>
         <div class="field">
           <label>Descripción</label>
@@ -1336,6 +1323,7 @@ html, body {
             <select id="d-pago">
               <option>Tarjeta</option><option>Efectivo</option>
               <option>Bizum</option><option>Transferencia</option>
+              <option>Domiciliación</option><option>Retirada cajero</option>
             </select>
           </div>
           <div class="field">
@@ -1392,17 +1380,13 @@ html, body {
         <div class="row-fields">
           <div class="field">
             <label>Categoría</label>
-            <select id="r-cat">
-              <option>Hogar</option><option>Suministros</option><option>Ocio</option>
-              <option>Salud</option><option>Transporte</option><option>Tecnología</option>
-              <option>Alimentación</option><option>Otros</option>
-            </select>
+            <select id="r-cat"><option>Cargando...</option></select>
           </div>
           <div class="field">
             <label>Frecuencia</label>
-            <select id="r-frec">
-              <option>Mensual</option><option>Trimestral</option>
-              <option>Semestral</option><option>Anual</option>
+            <select id="r-frec" onchange="toggleMesInicioField('r-mes-inicio-wrap',this.value)">
+              <option>Mensual</option><option>Quincenal</option>
+              <option>Trimestral</option><option>Semestral</option><option>Anual</option>
             </select>
           </div>
         </div>
@@ -1415,6 +1399,16 @@ html, body {
             <label>Día de cobro</label>
             <input type="number" id="r-dia" placeholder="ej: 1" min="1" max="31">
           </div>
+        </div>
+        <div class="field" id="r-mes-inicio-wrap" style="display:none">
+          <label>Mes en que se cobra (primer cobro)</label>
+          <select id="r-mes-inicio">
+            <option>Enero</option><option>Febrero</option><option>Marzo</option>
+            <option>Abril</option><option>Mayo</option><option>Junio</option>
+            <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+            <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+          </select>
+          <div style="font-size:11px;color:var(--md-on-surface-var);margin-top:4px">La app calculará los meses siguientes automáticamente</div>
         </div>
         <div class="field">
           <label>Notas</label>
@@ -1433,114 +1427,131 @@ html, body {
   <!-- AJUSTES -->
   <div class="view" id="view-settings">
 
+    <!-- ── APARIENCIA ── -->
     <div class="card">
       <div class="card-header"><div class="card-title"><span class="mi mi-18">palette</span> Apariencia</div></div>
-      <div style="margin-bottom:4px">
-        <div class="settings-label" style="margin-bottom:10px">Tema de la aplicación</div>
-        <div class="theme-pills">
-          <button class="theme-pill" data-theme-val="light" onclick="setTheme('light')"><span class="mi mi-16">light_mode</span> Claro</button>
-          <button class="theme-pill" data-theme-val="dark" onclick="setTheme('dark')"><span class="mi mi-16">dark_mode</span> Oscuro</button>
-          <button class="theme-pill active" data-theme-val="auto" onclick="setTheme('auto')"><span class="mi mi-16">brightness_auto</span> Auto</button>
-        </div>
+      <div class="theme-pills">
+        <button class="theme-pill" data-theme-val="light" onclick="setTheme('light')"><span class="mi mi-16">light_mode</span> Claro</button>
+        <button class="theme-pill" data-theme-val="dark" onclick="setTheme('dark')"><span class="mi mi-16">dark_mode</span> Oscuro</button>
+        <button class="theme-pill active" data-theme-val="auto" onclick="setTheme('auto')"><span class="mi mi-16">brightness_auto</span> Auto</button>
       </div>
     </div>
 
+    <!-- ── CONFIGURACIÓN (unificada) ── -->
     <div class="card">
-      <div class="card-header"><div class="card-title"><span class="mi mi-18">settings</span> Configuración</div></div>
-      <div class="settings-row">
-        <div>
-          <div class="settings-label">URL del Script</div>
-          <div class="settings-value" id="settings-url-display">—</div>
+      <div class="card-header">
+        <div class="card-title"><span class="mi mi-18">settings</span> Configuración</div>
+        <button id="btn-edit-cfg" onclick="toggleEditConfig()" style="background:var(--md-sc-high);border:none;cursor:pointer;padding:7px 14px;border-radius:20px;display:flex;align-items:center;gap:5px;color:var(--md-primary);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;transition:all .2s">
+          <span class="mi mi-16" id="icon-edit-cfg">edit</span>
+          <span id="label-edit-cfg">Editar</span>
+        </button>
+      </div>
+
+      <!-- Vista solo lectura -->
+      <div id="cfg-read-view">
+        <div class="settings-row">
+          <div style="min-width:0;flex:1">
+            <div class="settings-label">URL del Script</div>
+            <div class="settings-value" id="settings-url-display" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</div>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Persona 1</div>
+          <div class="settings-value" id="settings-name-display">—</div>
+        </div>
+        <div class="settings-row" style="border-bottom:none">
+          <div class="settings-label">Persona 2</div>
+          <div class="settings-value" id="settings-p2-display">—</div>
+        </div>
+        <!-- Soy yo (siempre visible) -->
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--md-outline-var)">
+          <div class="settings-label" style="margin-bottom:8px">En este dispositivo soy:</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="yo-soy-pills"></div>
         </div>
       </div>
-      <div class="settings-row">
-        <div class="settings-label">Persona 1</div>
-        <div class="settings-value" id="settings-name-display">—</div>
-      </div>
-      <div class="settings-row">
-        <div class="settings-label">Persona 2</div>
-        <div class="settings-value" id="settings-p2-display">—</div>
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="card-header"><div class="card-title"><span class="mi mi-18">edit</span> Modificar configuración</div></div>
-      <div class="field">
-        <label>URL de Google Apps Script</label>
-        <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
-      </div>
-      <div class="row-fields">
+      <!-- Formulario de edición (oculto por defecto) -->
+      <div id="cfg-edit-view" style="display:none;margin-top:4px">
         <div class="field">
-          <label>Tu nombre (Persona 1)</label>
-          <input type="text" id="cfg-p1" placeholder="ej: Carlos">
+          <label>URL de Google Apps Script</label>
+          <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+        <div class="row-fields">
+          <div class="field">
+            <label>Persona 1</label>
+            <input type="text" id="cfg-p1" placeholder="ej: Carlos">
+          </div>
+          <div class="field">
+            <label>Persona 2</label>
+            <input type="text" id="cfg-p2" placeholder="ej: María">
+          </div>
         </div>
         <div class="field">
-          <label>Nombre pareja (Persona 2)</label>
-          <input type="text" id="cfg-p2" placeholder="ej: María">
+          <label>PIN de acceso (4 dígitos)</label>
+          <div style="display:flex;gap:10px;align-items:center">
+            <input type="number" id="cfg-pin" placeholder="nuevo PIN" min="0" max="9999" style="width:110px;flex-shrink:0">
+            <span style="font-size:12px;color:var(--md-on-surface-var);line-height:1.4">Cada dispositivo tiene su propio PIN</span>
+          </div>
         </div>
+        <button class="btn btn-primary" style="width:100%" onclick="saveSettingsChanges()"><span class="mi mi-18">check</span> Guardar cambios</button>
       </div>
-
-      <div class="field" style="margin-top:4px">
-        <label>En este dispositivo soy:</label>
-        <div style="display:flex;gap:8px;margin-top:6px" id="yo-soy-pills"></div>
-      </div>
-
-      <div class="field" style="margin-top:4px">
-        <label>PIN de acceso (4 dígitos)</label>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="number" id="cfg-pin" placeholder="nuevo PIN" min="0" max="9999" style="flex:1">
-          <span style="font-size:12px;color:var(--md-on-surface-var);flex-shrink:0">Cada dispositivo puede tener su propio PIN</span>
-        </div>
-      </div>
-
-      <button class="btn btn-primary" onclick="saveSettingsChanges()"><span class="mi mi-18">save</span> Guardar cambios</button>
     </div>
 
     <!-- ── CATEGORÍAS ── -->
     <div class="card">
-      <div class="card-header"><div class="card-title"><span class="mi mi-18">label</span> Categorías de gastos</div></div>
-      <div id="settings-cats-list" style="margin-bottom:12px"></div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <input class="field-input" id="new-cat-nombre" placeholder="Nueva categoría..." style="flex:1;min-width:120px">
-        <input class="field-input" id="new-cat-icono" placeholder="icono" style="width:110px" title="Material Symbol name">
-        <button class="btn btn-primary" onclick="addNewCat()"><span class="mi mi-18">add</span></button>
-      </div>
-      <div style="font-size:11px;color:var(--md-on-surface-var);margin-top:6px">
-        Icono: nombre en <a href="https://fonts.google.com/icons" target="_blank" style="color:var(--md-primary)">fonts.google.com/icons</a> · ej: beach_access, pets, sports_soccer
+      <div class="card-header"><div class="card-title"><span class="mi mi-18">label</span> Categorías</div></div>
+      <div id="settings-cats-list" style="margin-bottom:16px"></div>
+      <!-- Nueva categoría inline -->
+      <div style="background:var(--md-sc-high);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--md-on-surface-var);text-transform:uppercase;letter-spacing:.5px">Nueva categoría</div>
+        <div class="row-fields">
+          <div class="field" style="margin:0">
+            <label>Nombre</label>
+            <input id="new-cat-nombre" placeholder="ej: Vacaciones">
+          </div>
+          <div class="field" style="margin:0">
+            <label>Icono <a href="https://fonts.google.com/icons" target="_blank" style="color:var(--md-primary);font-weight:500;text-transform:none;letter-spacing:0">ver iconos</a></label>
+            <input id="new-cat-icono" placeholder="ej: beach_access">
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="addNewCat()"><span class="mi mi-18">add_circle</span> Añadir categoría</button>
       </div>
     </div>
 
+    <!-- ── LLAVE DE RECUPERACIÓN ── -->
     <div class="card">
       <div class="card-header"><div class="card-title"><span class="mi mi-18">key</span> Llave de recuperación</div></div>
       <p style="font-size:13px;color:var(--md-on-surface-var);margin-bottom:14px;line-height:1.6">
-        Exporta una llave para recuperar toda tu configuración si pierdes el acceso a la app.
+        Guarda tu llave para recuperar la configuración si cambias de dispositivo.
       </p>
-      <button class="btn btn-tonal" onclick="exportRecoveryKey()" style="margin-bottom:12px">
-        <span class="mi mi-18">key</span> Exportar llave (.txt)
+      <button class="btn btn-tonal" onclick="exportRecoveryKey()" style="width:100%;margin-bottom:12px">
+        <span class="mi mi-18">download</span> Exportar llave (.txt)
       </button>
       <div class="field">
         <label>Restaurar desde llave</label>
         <label class="file-drop" for="recovery-file-input">
-          <span id="file-drop-text"><span class="mi mi-20">folder_open</span> Selecciona tu archivo .txt</span>
           <input type="file" id="recovery-file-input" accept=".txt" style="display:none" onchange="importRecoveryKey(this)">
+          <span class="mi mi-24" style="display:block;margin-bottom:6px">folder_open</span>
+          <span id="file-drop-text" style="display:block">Selecciona tu archivo .txt</span>
         </label>
       </div>
       <div id="recovery-preview" style="display:none" class="recovery-preview">
         <div id="recovery-preview-content"></div>
-        <button class="btn btn-primary" style="margin-top:12px" onclick="applyRecoveryKey()"><span class="mi mi-18">check_circle</span> Restaurar configuración</button>
+        <button class="btn btn-primary" style="margin-top:12px;width:100%" onclick="applyRecoveryKey()"><span class="mi mi-18">check_circle</span> Restaurar configuración</button>
       </div>
     </div>
 
+    <!-- ── ACERCA DE ── -->
     <div class="card">
       <div class="card-header"><div class="card-title"><span class="mi mi-18">info</span> Acerca de</div></div>
       <p style="font-size:13px;color:var(--md-on-surface-var);line-height:1.7">
         Los datos viven en tu Google Sheet. La app es la interfaz móvil para consultarlos y añadir registros.<br><br>
-        Configuración almacenada localmente. Usa la llave de recuperación como copia de seguridad.
+        Configuración guardada localmente en este dispositivo.
       </p>
     </div>
 
-    <div style="text-align:center;padding:8px 0 4px;font-size:12px;color:var(--md-on-surface-var);opacity:.5">
-      Finanzas del Hogar · v2.0
+    <div style="text-align:center;padding:8px 0 20px;font-size:12px;color:var(--md-on-surface-var);opacity:.4">
+      Hogar &amp; Finanzas · v2.1
     </div>
   </div>
 
@@ -1886,21 +1897,19 @@ function updatePersonaSelects() {
 }
 function updateCatSelects() {
   const cats = getCategoriasArr();
-  ['d-cat'].forEach(id => {
-    const el=document.getElementById(id); if(!el) return;
-    const prev=el.value;
-    el.innerHTML='';
+  ['d-cat','r-cat','edit-cat'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    const prev = el.value;
+    el.innerHTML = '';
     cats.forEach(c => {
-      const opt=document.createElement('option'); opt.value=c.nombre; opt.textContent=c.nombre;
-      if(c.nombre===prev) opt.selected=true;
+      const opt = document.createElement('option');
+      opt.value = c.nombre; opt.textContent = c.nombre;
+      if (c.nombre === prev) opt.selected = true;
       el.appendChild(opt);
     });
+    // Si ninguna seleccionada, seleccionar la primera
+    if (!el.value && cats.length) el.value = cats[0].nombre;
   });
-  // También recurrente cat
-  const rc=document.getElementById('r-cat'); if(rc){
-    const prev=rc.value; rc.innerHTML='';
-    cats.forEach(c=>{ const o=document.createElement('option');o.value=c.nombre;o.textContent=c.nombre;if(c.nombre===prev)o.selected=true;rc.appendChild(o); });
-  }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -2040,6 +2049,31 @@ async function loadDiarios() {
   try { el.innerHTML=renderDiarios((await api({action:'getDiarios',mes:state.mes,anio:state.anio})).data||[]); }
   catch(e) { el.innerHTML=renderError(e); }
 }
+
+
+// Convierte cualquier fecha a YYYY-MM-DD para input[type=date]
+function fechaToInput(raw) {
+  if (!raw) return '';
+  const s = String(raw);
+  // dd/mm/yyyy → yyyy-mm-dd
+  const dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (dmy) return dmy[3]+'-'+dmy[2].padStart(2,'0')+'-'+dmy[1].padStart(2,'0');
+  // ISO: ya está bien o casi
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return iso[1]+'-'+iso[2]+'-'+iso[3];
+  return '';
+}
+// Formatea cualquier valor de fecha del Sheet a "dd/mm/yyyy"
+function fmtFecha(raw) {
+  if (!raw) return '';
+  const s = String(raw);
+  // Ya está en dd/mm/yyyy
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) return s;
+  // ISO 8601: 2026-03-02T08:00:00.000Z o 2026-03-02
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return iso[3]+'/'+iso[2]+'/'+iso[1];
+  return s;
+}
 function renderDiarios(items) {
   if (!items.length) return `<div class="empty"><div style="margin-bottom:12px"><span class="mi mi-40" style="color:var(--md-outline)">shopping_cart</span></div><p>Sin gastos en ${state.mes} ${state.anio}.<br>Usa el botón <strong>＋</strong> para añadir.</p></div>`;
   window._diariosCache = items;
@@ -2047,12 +2081,30 @@ function renderDiarios(items) {
   const total=items.reduce((s,i)=>s+(i.importe||0),0);
   const list=items.map((item,idx)=>{
     const color=CAT_COLORS[item.categoria]||'var(--cat-other)';
-    const dot=item.quien===state.myName?'<span class="mi mi-16" style="color:var(--cat-food)">person</span>':item.quien===state.p2Name?'<span class="mi mi-16" style="color:var(--cat-health)">person</span>':'<span class="mi mi-16" style="color:var(--md-on-surface-var)">group</span>';
+    // Quien: domiciliaciones no tienen persona real
+    const esDomiciliacion = item.pago === 'Domiciliación';
+    const quienLabel = esDomiciliacion ? '' : (item.quien || '');
+    const quienIcon  = esDomiciliacion ? '' :
+      item.quien === state.myName  ? '<span class="mi mi-14" style="color:var(--cat-food)">person</span>' :
+      item.quien === state.p2Name  ? '<span class="mi mi-14" style="color:var(--cat-health)">person</span>' :
+      '<span class="mi mi-14" style="color:var(--md-on-surface-var)">group</span>';
+    const pagoIcon =
+      item.pago==='Domiciliación'   ? 'account_balance' :
+      item.pago==='Retirada cajero' ? 'local_atm' :
+      item.pago==='Bizum'           ? 'send_money' :
+      item.pago==='Efectivo'        ? 'payments' :
+      item.pago==='Transferencia'   ? 'swap_horiz' : 'credit_card';
+    const fechaFmt = fmtFecha(item.fecha);
     return `<div class="expense-item" style="gap:8px">
       <div class="expense-icon" style="background:color-mix(in srgb,${color} 18%,transparent);color:${color}"><span class="mi mi-outline" style="font-size:22px">${CAT_ICONS[item.categoria]||'inventory_2'}</span></div>
       <div class="expense-info" style="flex:1;min-width:0">
         <div class="expense-desc">${item.descripcion||'—'}</div>
-        <div class="expense-meta" style="display:flex;align-items:center;gap:4px">${dot} ${item.quien} · ${item.fecha||''} · ${item.pago||''}</div>
+        <div class="expense-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px">
+          ${quienLabel ? `<span style="display:flex;align-items:center;gap:2px">${quienIcon} ${quienLabel}</span><span style="color:var(--md-outline-var)">·</span>` : ''}
+          <span style="display:flex;align-items:center;gap:3px"><span class="mi mi-14">calendar_today</span> ${fechaFmt}</span>
+          <span style="color:var(--md-outline-var)">·</span>
+          <span style="display:flex;align-items:center;gap:3px"><span class="mi mi-14">${pagoIcon}</span> ${item.pago||''}</span>
+        </div>
       </div>
       <div class="expense-amount neg" style="flex-shrink:0">${fmt(item.importe)}</div>
       <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
@@ -2078,10 +2130,53 @@ async function loadMore() {
     el.innerHTML=renderMore(rec.data||[],ing.data||[]);
   } catch(e) { el.innerHTML=renderError(e); }
 }
+
+// ─────────────────────────────────────────────────────────────
+//  RECURRENTES — lógica de frecuencia
+//  mes_inicio: "Enero", "Febrero"... (mes en que empieza el ciclo)
+//  frecuencia: Mensual | Quincenal | Trimestral | Semestral | Anual
+// ─────────────────────────────────────────────────────────────
+function toggleMesInicioField(wrapId, frecuencia) {
+  const el = document.getElementById(wrapId);
+  if (!el) return;
+  const necesita = frecuencia && frecuencia !== 'Mensual' && frecuencia !== 'Quincenal';
+  el.style.display = necesita ? '' : 'none';
+}
+function recTocaEnMes(r, mes, anio) {
+  if (r.activo !== '✅') return false;
+  const frec = r.frecuencia || 'Mensual';
+  if (frec === 'Mensual' || frec === 'Quincenal') return true;
+  // Para frecuencias >1 mes NECESITAMOS mes_inicio — sin él, no se puede saber si toca
+  const mesInicio = r.mes_inicio || '';
+  if (!mesInicio) return false; // sin mes configurado → no contar
+  const mesesIdx = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const idxActual = mesesIdx.indexOf(mes);
+  const idxInicio = mesesIdx.indexOf(mesInicio);
+  if (idxActual === -1 || idxInicio === -1) return false;
+  const diff = ((idxActual - idxInicio) % 12 + 12) % 12;
+  if (frec === 'Trimestral') return diff % 3 === 0;
+  if (frec === 'Semestral')  return diff % 6 === 0;
+  if (frec === 'Anual')      return diff === 0;
+  return false;
+}
+
+function recImporteMensualizado(r) {
+  // Para el resumen: cuánto supone de media al mes
+  const frec = r.frecuencia || 'Mensual';
+  const imp = r.importe || 0;
+  if (frec === 'Trimestral') return imp / 3;
+  if (frec === 'Semestral')  return imp / 6;
+  if (frec === 'Anual')      return imp / 12;
+  return imp; // Mensual / Quincenal
+}
 function renderMore(recurrentes,ingresos) {
   const fmt=n=>(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
   const activos=recurrentes.filter(r=>r.activo==='✅');
-  const totalRec=activos.reduce((s,r)=>s+(r.importe||0),0);
+  // Solo sumar los que tocan este mes
+  const recEsteMes=activos.filter(r=>recTocaEnMes(r,state.mes,state.anio));
+  const totalRec=recEsteMes.reduce((s,r)=>s+(r.importe||0),0);
+  const totalMensualizado=activos.reduce((s,r)=>s+recImporteMensualizado(r),0);
   window._recurrentesCache = recurrentes;
   const recList=recurrentes.map((r,recIdx)=>{
     const isOn=r.activo==='✅';
@@ -2089,7 +2184,23 @@ function renderMore(recurrentes,ingresos) {
     return `<div class="rec-item" style="gap:6px">
       <div class="expense-icon" style="background:color-mix(in srgb,${color} 18%,transparent);color:${color}"><span class="mi mi-outline" style="font-size:22px">${CAT_ICONS[r.categoria]||'inventory_2'}</span></div>
       <div class="rec-info" style="flex:1;min-width:0"><div class="rec-name">${r.nombre||'—'}</div>
-      <div class="rec-meta">${r.categoria||''} · día ${r.dia_cobro||'?'} · ${r.frecuencia||''}</div></div>
+      <div class="rec-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span>${r.categoria||''}</span>
+        <span>·</span>
+        <span>día ${r.dia_cobro||'?'}</span>
+        <span>·</span>
+        ${(()=>{
+          const frec=r.frecuencia||'Mensual';
+          const noMensual=frec!=='Mensual'&&frec!=='Quincenal';
+          const sinMes=noMensual&&!r.mes_inicio;
+          const toca=recTocaEnMes(r,state.mes,state.anio);
+          const bg=toca?'color-mix(in srgb,var(--md-primary) 18%,transparent)':sinMes?'color-mix(in srgb,var(--md-error) 14%,transparent)':'color-mix(in srgb,var(--md-outline) 12%,transparent)';
+          const col=toca?'var(--md-primary)':sinMes?'var(--md-error)':'var(--md-on-surface-var)';
+          const lbl=frec+(noMensual&&r.mes_inicio?' · '+r.mes_inicio:'');
+          const sub=sinMes?'<span style="font-size:11px;color:var(--md-error);font-weight:700">⚠️ edita y pon el mes</span>':!toca?'<span style="font-size:11px;color:var(--md-on-surface-var);font-style:italic">no toca este mes</span>':'';
+          return `<span style="background:${bg};color:${col};padding:1px 7px;border-radius:20px;font-size:11px;font-weight:600">${lbl}</span> ${sub}`;
+        })()}
+      </div></div>
       <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;flex-shrink:0;color:${isOn?'var(--md-on-surface)':'var(--md-on-surface-var)'}">${fmt(r.importe)}</div>
       <div class="md-switch ${isOn?'on':''}" onclick="toggleRec(${r.fila},'${isOn?'⏸️':'✅'}',this)" style="flex-shrink:0"></div>
       <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
@@ -2110,15 +2221,18 @@ function renderMore(recurrentes,ingresos) {
         <button onclick="deleteItem('ingresos',${i.fila},this)" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)" title="Eliminar"><span class="mi mi-18">delete</span></button>
       </div>
     </div>`).join(''):'<div class="empty"><p>Sin ingresos este mes</p></div>';
-  return `<div class="section-title"><span class="mi mi-18">autorenew</span> Gastos Recurrentes</div>
-  <div class="card" style="margin-bottom:10px">
+  return `<div class="section-title"><span class="mi mi-18">payments</span> Ingresos · ${state.mes} ${state.anio}</div>
+  <div class="card" style="margin-bottom:10px">${ingList}</div>
+  <div class="section-title"><span class="mi mi-18">autorenew</span> Gastos Recurrentes</div>
+  <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span style="font-size:13px;color:var(--md-on-surface-var)">${activos.length} activos de ${recurrentes.length}</span>
-      <span style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--cat-leisure)">${fmt(totalRec)}/mes</span>
+      <div style="text-align:right">
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;color:var(--cat-leisure)">${fmt(totalRec)} <span style="font-size:11px;font-weight:500">este mes</span></div>
+        <div style="font-size:11px;color:var(--md-on-surface-var)">~${fmt(totalMensualizado)}/mes medio</div>
+      </div>
     </div>${recList||'<div class="empty"><p>Sin gastos fijos configurados</p></div>'}
-  </div>
-  <div class="section-title"><span class="mi mi-18">payments</span> Ingresos · ${state.mes} ${state.anio}</div>
-  <div class="card">${ingList}</div>`;
+  </div>`;
 }
 async function toggleRec(fila,nuevoEstado,el) {
   el.classList.toggle('on',nuevoEstado==='✅');
@@ -2177,7 +2291,8 @@ async function addRecurrente() {
   if (!nombre){showToast('Introduce el nombre del gasto','error');return;}
   btn.disabled=true; btn.textContent='Guardando...';
   try {
-    await api({action:'addRecurrente',nombre,categoria:document.getElementById('r-cat').value,importe:imp,dia_cobro:document.getElementById('r-dia').value||1,frecuencia:document.getElementById('r-frec').value,activo:'✅',notas:document.getElementById('r-notas').value.trim()});
+    const _frec=document.getElementById('r-frec').value; const _mesI=_frec!=='Mensual'&&_frec!=='Quincenal'?document.getElementById('r-mes-inicio').value:'';
+    await api({action:'addRecurrente',nombre,categoria:document.getElementById('r-cat').value,importe:imp,dia_cobro:document.getElementById('r-dia').value||1,frecuencia:_frec,mes_inicio:_mesI,activo:'✅',notas:document.getElementById('r-notas').value.trim()});
     showToast('Gasto fijo añadido ✓','success');
     document.getElementById('r-nombre').value=''; document.getElementById('r-imp').value=''; document.getElementById('r-notas').value='';
   } catch(e){showToast('Error: '+e.message,'error');}
@@ -2187,65 +2302,149 @@ async function addRecurrente() {
 // ─────────────────────────────────────────────────────────────
 //  SETUP
 // ─────────────────────────────────────────────────────────────
+// ── SETUP WIZARD ──────────────────────────────────────────────
+let _setupSelectedUser = '';
+
 function switchSetupTab(tab) {
-  document.getElementById('setup-tab-new').classList.toggle('active',tab==='new');
-  document.getElementById('setup-tab-recover').classList.toggle('active',tab==='recover');
-  document.getElementById('setup-panel-new').style.display    =tab==='new'    ?'':'none';
-  document.getElementById('setup-panel-recover').style.display=tab==='recover'?'':'none';
+  document.getElementById('setup-tab-new').classList.toggle('active', tab==='new');
+  document.getElementById('setup-tab-recover').classList.toggle('active', tab==='recover');
+  document.getElementById('setup-step-1').style.display = tab==='new' ? '' : 'none';
+  document.getElementById('setup-step-2').style.display = 'none';
+  document.getElementById('setup-panel-recover').style.display = tab==='recover' ? '' : 'none';
 }
-async function saveSetup() {
-  const url=document.getElementById('setup-url').value.trim();
-  const p1=document.getElementById('setup-p1').value.trim()||'Persona 1';
-  const p2=document.getElementById('setup-p2').value.trim()||'Persona 2';
-  const pin=String(document.getElementById('setup-pin').value||'').trim();
-  const pin2=String(document.getElementById('setup-pin2').value||'').trim();
-  if (!url){showToast('Introduce la URL del Apps Script','error');return;}
-  if (!url.includes('script.google.com')){showToast('La URL no parece válida','error');return;}
-  if (!pin||pin.length!==4||!/^\d{4}$/.test(pin)){showToast('El PIN debe tener 4 dígitos','error');return;}
-  if (pin!==pin2){showToast('Los dos PINs no coinciden','error');return;}
-  // Mostrar selector de usuario si hay nombres
-  if (p1 && p2) {
-    const g = document.getElementById('setup-quien-group');
-    const sel = document.getElementById('setup-quien');
-    g.style.display = '';
-    sel.innerHTML = '<option value="">— Selecciona —</option>';
-    [p1, p2].forEach(n => { const o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
-  }
-  const quien = document.getElementById('setup-quien')?.value || '';
-  if (!quien) { showToast('Selecciona quién eres tú en este dispositivo','error'); return; }
-  const btn=document.getElementById('btn-setup');
-  btn.disabled=true; btn.textContent='Verificando...';
-  state.scriptUrl = url; // necesario antes de llamar a api()
+
+async function setupConnect() {
+  const url = document.getElementById('setup-url').value.trim();
+  if (!url) { showToast('Introduce la URL del Apps Script','error'); return; }
+  if (!url.includes('script.google.com')) { showToast('La URL no parece válida','error'); return; }
+  const btn = document.getElementById('btn-conectar');
+  btn.disabled = true; btn.innerHTML = '<span class="mi mi-18">sync</span> Conectando...';
+  // Guardar URL en state para que api() funcione
+  localStorage.setItem('scriptUrl', url);
   try {
-    // Ping usando JSONP (mismo mecanismo que el resto de llamadas)
-    const data = await api({ action: 'ping' });
-    if (!data.ok) throw new Error('Respuesta inesperada del script');
-    const quien2 = document.getElementById('setup-quien')?.value || p1;
-    localStorage.setItem('scriptUrl',url); localStorage.setItem('nombre1',p1);
-    localStorage.setItem('nombre2',p2);
-    localStorage.setItem('appPin', pin);
-    localStorage.setItem('miUsuario', quien2);
-    localStorage.setItem('configured','1');
-    updatePersonaSelects();
-    showToast('Conectado y configurado ✓','success');
-    setTimeout(()=>{document.getElementById('pin-screen').classList.add('hidden');showView('dashboard');loadSettings();},700);
-  } catch(e){
-    // Si falla el ping pero la URL parece correcta, guardar igualmente y dejar que el dashboard lo confirme
-    if (url.includes('script.google.com') && url.includes('/exec')) {
-      const quien3 = document.getElementById('setup-quien')?.value || p1;
-      localStorage.setItem('scriptUrl',url); localStorage.setItem('nombre1',p1);
-      localStorage.setItem('nombre2',p2);
-      localStorage.setItem('appPin', pin);
-      localStorage.setItem('miUsuario', quien3);
-      localStorage.setItem('configured','1');
-      updatePersonaSelects();
-      showToast('Configuración guardada — verifica al cargar','success');
-      setTimeout(()=>{document.getElementById('pin-screen').classList.add('hidden');showView('dashboard');loadSettings();},700);
-    } else {
-      showToast('URL no válida: ' + e.message,'error');
-      btn.disabled=false; btn.textContent='Conectar y empezar →';
-    }
+    // Ping + descargar usuarios y categorías en paralelo
+    const [ping, usrs, cats] = await Promise.all([
+      api({action:'ping'}),
+      api({action:'getUsuarios'}).catch(()=>({ok:false,data:[]})),
+      api({action:'getCategorias'}).catch(()=>({ok:false,data:[]}))
+    ]);
+    if (!ping.ok) throw new Error('El script no responde correctamente');
+    // Guardar datos descargados
+    if (usrs.ok && usrs.data && usrs.data.length) saveUsuarios(usrs.data);
+    if (cats.ok && cats.data && cats.data.length) saveCategorias(cats.data);
+    // Pasar a paso 2
+    document.getElementById('setup-step-1').style.display = 'none';
+    document.getElementById('setup-step-2').style.display = '';
+    _renderSetupUserBtns();
+    showToast('¡Conectado! Ahora selecciona quién eres','success');
+  } catch(e) {
+    showToast('Error al conectar: ' + e.message, 'error');
+    btn.disabled = false; btn.innerHTML = '<span class="mi mi-18">cloud_download</span> Conectar y descargar datos';
   }
+}
+
+function _renderSetupUserBtns() {
+  const usuarios = getUsuariosArr();
+  const container = document.getElementById('setup-usuarios-btns');
+  _setupSelectedUser = '';
+  container.innerHTML = usuarios.map((u, idx) => `
+    <button data-idx="${idx}" onclick="selectSetupUser(${idx})" style="
+      width:100%;padding:16px;border-radius:16px;border:2px solid var(--md-outline-var);
+      background:var(--md-sc-high);color:var(--md-on-surface);
+      font-family:'Nunito',sans-serif;font-weight:600;font-size:16px;
+      cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s;text-align:left">
+      <span class="mi mi-28" style="color:var(--md-outline)">person</span>
+      <span>${u.nombre}</span>
+    </button>`).join('');
+}
+
+function selectSetupUser(idx) {
+  const usuarios = getUsuariosArr();
+  if (!usuarios[idx]) return;
+  _setupSelectedUser = usuarios[idx].nombre;
+  document.querySelectorAll('#setup-usuarios-btns button').forEach((b, i) => {
+    const sel = i === idx;
+    b.style.borderColor = sel ? 'var(--md-primary)' : 'var(--md-outline-var)';
+    b.style.background  = sel ? 'var(--md-primary-container)' : 'var(--md-sc-high)';
+    b.style.color       = sel ? 'var(--md-on-primary-cont)' : 'var(--md-on-surface)';
+    b.querySelector('.mi').style.color = sel ? 'var(--md-primary)' : 'var(--md-outline)';
+  });
+}
+
+async function saveSetup() {
+  if (!_setupSelectedUser) { showToast('Selecciona quién eres en este dispositivo','error'); return; }
+  const pin  = String(document.getElementById('setup-pin').value||'').trim();
+  const pin2 = String(document.getElementById('setup-pin2').value||'').trim();
+  if (pin && (pin.length!==4 || !/^\d{4}$/.test(pin))) { showToast('El PIN debe tener 4 dígitos','error'); return; }
+  if (pin && pin!==pin2) { showToast('Los dos PINs no coinciden','error'); return; }
+  const btn = document.getElementById('btn-setup');
+  btn.disabled = true; btn.innerHTML = '<span class="mi mi-18">sync</span> Guardando...';
+  // Buscar nombre1/nombre2 a partir de la lista de usuarios
+  const usuarios = getUsuariosArr();
+  const n1 = usuarios[0]?.nombre || 'Persona 1';
+  const n2 = usuarios[1]?.nombre || 'Persona 2';
+  localStorage.setItem('nombre1', n1);
+  localStorage.setItem('nombre2', n2);
+  localStorage.setItem('miUsuario', _setupSelectedUser);
+  if (pin) localStorage.setItem('appPin', pin);
+  localStorage.setItem('configured','1');
+  updatePersonaSelects(); updateCatSelects();
+  showToast('¡Todo listo! Bienvenido/a, ' + _setupSelectedUser + ' 🎉','success');
+  setTimeout(()=>{ showView('dashboard'); loadSettings(); }, 700);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  CATEGORÍAS — gestión desde Ajustes
+// ─────────────────────────────────────────────────────────────
+function _renderSettingsCats() {
+  const el = document.getElementById('settings-cats-list');
+  if (!el) return;
+  const cats = getCategoriasArr();
+  if (!cats.length) {
+    el.innerHTML = '<div style="color:var(--md-on-surface-var);font-size:13px;padding:8px 0">Sin categorías cargadas aún</div>';
+    return;
+  }
+  el.innerHTML = cats.map((c, i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--md-outline-var)">
+      <span class="mi mi-20 mi-outline" style="color:${CAT_COLORS_BASE[i % CAT_COLORS_BASE.length]};flex-shrink:0">${c.icono || 'inventory_2'}</span>
+      <span style="flex:1;font-size:14px;font-weight:500">${c.nombre}</span>
+      <button onclick="deleteCat(${c.fila || 0}, '${c.nombre.replace(/'/g, '').replace(/"/g, '')}')"
+        style="background:none;border:none;cursor:pointer;color:var(--md-error);padding:6px;flex-shrink:0;border-radius:8px">
+        <span class="mi mi-18">delete</span>
+      </button>
+    </div>`).join('');
+}
+
+async function addNewCat() {
+  const nombreEl = document.getElementById('new-cat-nombre');
+  const iconoEl  = document.getElementById('new-cat-icono');
+  const nombre = (nombreEl?.value || '').trim();
+  const icono  = (iconoEl?.value  || '').trim() || 'inventory_2';
+  if (!nombre) { showToast('Escribe el nombre de la categoría', 'error'); return; }
+  try {
+    const r = await api({ action: 'addCategoria', nombre, icono });
+    if (r && r.ok === false) throw new Error(r.msg || 'Error del servidor');
+    // Recargar lista del servidor
+    const d = await api({ action: 'getCategorias' });
+    if (d.ok && d.data && d.data.length) saveCategorias(d.data);
+    if (nombreEl) nombreEl.value = '';
+    if (iconoEl)  iconoEl.value  = '';
+    _renderSettingsCats();
+    updateCatSelects();
+    showToast('"' + nombre + '" añadida ✓', 'success');
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function deleteCat(fila, nombre) {
+  if (!confirm('¿Eliminar la categoría "' + nombre + '"?')) return;
+  try {
+    if (fila > 0) await api({ action: 'deleteCategoria', fila });
+    const d = await api({ action: 'getCategorias' });
+    if (d.ok && d.data) saveCategorias(d.data);
+    _renderSettingsCats();
+    updateCatSelects();
+    showToast('Categoría eliminada ✓', 'success');
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -2328,10 +2527,15 @@ function loadSettings() {
     ).join('');
   }
 
-  document.getElementById('cfg-url').value=url;
-  document.getElementById('cfg-pin').value='';
-  document.getElementById('cfg-p1').value=localStorage.getItem('nombre1')||'';
-  document.getElementById('cfg-p2').value=localStorage.getItem('nombre2')||'';
+  // Solo actualizar campos de edición si existen (pueden estar ocultos)
+  const cfgUrl = document.getElementById('cfg-url');
+  if (cfgUrl) { cfgUrl.value = url; }
+  const cfgPin = document.getElementById('cfg-pin');
+  if (cfgPin) { cfgPin.value = ''; }
+  const cfgP1 = document.getElementById('cfg-p1');
+  if (cfgP1) { cfgP1.value = localStorage.getItem('nombre1')||''; }
+  const cfgP2 = document.getElementById('cfg-p2');
+  if (cfgP2) { cfgP2.value = localStorage.getItem('nombre2')||''; }
   _renderSettingsCats();
 }
 function saveSettingsChanges() {
@@ -2347,9 +2551,50 @@ function saveSettingsChanges() {
   // miUsuario se guarda via setMiUsuario al pulsar la píldora — no sobreescribir si no se tocó
   updatePersonaSelects(); loadSettings();
   showToast('Cambios guardados ✓','success');
+  // Cerrar formulario de edición
+  const ev = document.getElementById('cfg-edit-view');
+  const rv = document.getElementById('cfg-read-view');
+  if (ev && rv) {
+    ev.style.display = 'none'; rv.style.display = '';
+    const icon = document.getElementById('icon-edit-cfg');
+    const lbl  = document.getElementById('label-edit-cfg');
+    const btn  = document.getElementById('btn-edit-cfg');
+    if (icon) icon.textContent = 'edit';
+    if (lbl)  lbl.textContent  = 'Editar';
+    if (btn)  btn.style.color  = 'var(--md-primary)';
+  }
 }
 function downloadConfiguredFile(){saveSettingsChanges();}
 function editUrl(){}  function editName(){}  function saveNames(){saveSettingsChanges();}
+function toggleEditConfig() {
+  const readView = document.getElementById('cfg-read-view');
+  const editView = document.getElementById('cfg-edit-view');
+  const btn      = document.getElementById('btn-edit-cfg');
+  const icon     = document.getElementById('icon-edit-cfg');
+  const label    = document.getElementById('label-edit-cfg');
+  const isEditing = editView.style.display !== 'none';
+  if (isEditing) {
+    // Cancelar edición
+    editView.style.display = 'none';
+    readView.style.display = '';
+    icon.textContent  = 'edit';
+    label.textContent = 'Editar';
+    btn.style.color   = 'var(--md-primary)';
+  } else {
+    // Abrir edición
+    readView.style.display = 'none';
+    editView.style.display = '';
+    icon.textContent  = 'close';
+    label.textContent = 'Cancelar';
+    btn.style.color   = 'var(--md-error)';
+    // Rellenar campos con valores actuales
+    document.getElementById('cfg-url').value = localStorage.getItem('scriptUrl') || '';
+    document.getElementById('cfg-p1').value  = localStorage.getItem('nombre1')   || '';
+    document.getElementById('cfg-p2').value  = localStorage.getItem('nombre2')   || '';
+    document.getElementById('cfg-pin').value = '';
+  }
+}
+
 function setMiUsuario(nombre) {
   localStorage.setItem('miUsuario', nombre);
   updatePersonaSelects();
@@ -2438,35 +2683,45 @@ function renderError(e) {
 let _editState = null;
 
 function openEditModal() {
-  document.getElementById('edit-modal').style.display = 'flex';
+  const m = document.getElementById('edit-modal');
+  m.style.display = 'flex';
+  const sheet = m.querySelector('div');
+  sheet.style.transform = 'translateY(100%)';
+  sheet.style.transition = 'transform .3s cubic-bezier(.32,.72,0,1)';
+  requestAnimationFrame(() => { sheet.style.transform = 'translateY(0)'; });
+  setTimeout(updateCatSelects, 50);
 }
 function closeEditModal(e) {
-  if (!e || e.target === document.getElementById('edit-modal')) {
-    document.getElementById('edit-modal').style.display = 'none';
-    _editState = null;
-  }
+  if (e && e.target !== document.getElementById('edit-modal') && e.target !== document.querySelector('#edit-modal > div')) return;
+  const m = document.getElementById('edit-modal');
+  const sheet = m.querySelector('div');
+  sheet.style.transform = 'translateY(100%)';
+  setTimeout(() => { m.style.display = 'none'; _editState = null; sheet.style.transform = ''; }, 280);
 }
+
 
 function openEditDiario(item) {
   _editState = { type: 'diario', item };
   document.getElementById('edit-modal-title').textContent = 'Editar gasto';
   document.getElementById('edit-modal-body').innerHTML = `
-    <div class="field-group"><label class="field-label">Descripción</label>
-      <input class="field-input" id="edit-desc" value="${item.descripcion||''}"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="field-group"><label class="field-label">Importe (€)</label>
-        <input class="field-input" id="edit-imp" type="number" step="0.01" value="${item.importe||''}"></div>
-      <div class="field-group"><label class="field-label">Categoría</label>
-        <select class="field-input" id="edit-cat">${['Alimentación','Transporte','Ocio','Salud','Ropa','Tecnología','Hogar','Suministros','Otros'].map(c=>`<option ${c===item.categoria?'selected':''}>${c}</option>`).join('')}</select></div>
+    <div class="field"><label>Descripción</label>
+      <input id="edit-desc" value="${item.descripcion||''}" placeholder="Descripción"></div>
+    <div class="row-fields">
+      <div class="field"><label>Importe (€)</label>
+        <input id="edit-imp" type="number" step="0.01" value="${item.importe||''}" placeholder="0.00"></div>
+      <div class="field"><label>Categoría</label>
+        <select id="edit-cat"><option>${item.categoria||''}</option></select></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="field-group"><label class="field-label">Quién pagó</label>
-        <select class="field-input" id="edit-quien">${[state.myName,state.p2Name,'Ambos'].map(n=>`<option ${n===item.quien?'selected':''}>${n}</option>`).join('')}</select></div>
-      <div class="field-group"><label class="field-label">Forma de pago</label>
-        <select class="field-input" id="edit-pago">${['Tarjeta','Efectivo','Bizum','Transferencia'].map(p=>`<option ${p===item.pago?'selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="row-fields">
+      <div class="field"><label>Quién pagó</label>
+        <select id="edit-quien">${[state.myName,state.p2Name,'Ambos'].map(n=>`<option ${n===item.quien?'selected':''}>${n}</option>`).join('')}</select></div>
+      <div class="field"><label>Forma de pago</label>
+        <select id="edit-pago">${['Tarjeta','Efectivo','Bizum','Transferencia','Domiciliación','Retirada cajero'].map(p=>`<option ${p===item.pago?'selected':''}>${p}</option>`).join('')}</select></div>
     </div>
-    <div class="field-group"><label class="field-label">Notas</label>
-      <input class="field-input" id="edit-notas" value="${item.notas||''}"></div>`;
+    <div class="field"><label>Fecha</label>
+      <input id="edit-fecha" type="date" value="${fechaToInput(item.fecha)}"></div>
+    <div class="field"><label>Notas</label>
+      <input id="edit-notas" value="${item.notas||''}" placeholder="opcional"></div>`;
   openEditModal();
 }
 
@@ -2474,39 +2729,44 @@ function openEditIngreso(item) {
   _editState = { type: 'ingreso', item };
   document.getElementById('edit-modal-title').textContent = 'Editar ingreso';
   document.getElementById('edit-modal-body').innerHTML = `
-    <div class="field-group"><label class="field-label">Concepto</label>
-      <input class="field-input" id="edit-concepto" value="${item.concepto||''}"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="field-group"><label class="field-label">Importe (€)</label>
-        <input class="field-input" id="edit-imp" type="number" step="0.01" value="${item.importe||''}"></div>
-      <div class="field-group"><label class="field-label">Persona</label>
-        <select class="field-input" id="edit-persona">${[state.myName,state.p2Name].map(n=>`<option ${n===item.persona?'selected':''}>${n}</option>`).join('')}</select></div>
+    <div class="field"><label>Concepto</label>
+      <input id="edit-concepto" value="${item.concepto||''}" placeholder="Concepto"></div>
+    <div class="row-fields">
+      <div class="field"><label>Importe (€)</label>
+        <input id="edit-imp" type="number" step="0.01" value="${item.importe||''}" placeholder="0.00"></div>
+      <div class="field"><label>Persona</label>
+        <select id="edit-persona">${[state.myName,state.p2Name].map(n=>`<option ${n===item.persona?'selected':''}>${n}</option>`).join('')}</select></div>
     </div>
-    <div class="field-group"><label class="field-label">Notas</label>
-      <input class="field-input" id="edit-notas" value="${item.notas||''}"></div>`;
+    <div class="field"><label>Notas</label>
+      <input id="edit-notas" value="${item.notas||''}" placeholder="opcional"></div>`;
   openEditModal();
 }
 
 function openEditRecurrente(item) {
   _editState = { type: 'recurrente', item };
   document.getElementById('edit-modal-title').textContent = 'Editar recurrente';
+  const noMensual = item.frecuencia && item.frecuencia !== 'Mensual' && item.frecuencia !== 'Quincenal';
   document.getElementById('edit-modal-body').innerHTML = `
-    <div class="field-group"><label class="field-label">Nombre</label>
-      <input class="field-input" id="edit-nombre" value="${item.nombre||''}"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="field-group"><label class="field-label">Importe (€)</label>
-        <input class="field-input" id="edit-imp" type="number" step="0.01" value="${item.importe||''}"></div>
-      <div class="field-group"><label class="field-label">Categoría</label>
-        <select class="field-input" id="edit-cat">${['Hogar','Suministros','Alimentación','Transporte','Ocio','Salud','Ropa','Tecnología','Otros'].map(c=>`<option ${c===item.categoria?'selected':''}>${c}</option>`).join('')}</select></div>
+    <div class="field"><label>Nombre</label>
+      <input id="edit-nombre" value="${item.nombre||''}" placeholder="Nombre del gasto"></div>
+    <div class="row-fields">
+      <div class="field"><label>Importe (€)</label>
+        <input id="edit-imp" type="number" step="0.01" value="${item.importe||''}" placeholder="0.00"></div>
+      <div class="field"><label>Categoría</label>
+        <select id="edit-cat"><option>${item.categoria||''}</option></select></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="field-group"><label class="field-label">Día de cobro</label>
-        <input class="field-input" id="edit-dia" type="number" min="1" max="31" value="${item.dia_cobro||'1'}"></div>
-      <div class="field-group"><label class="field-label">Frecuencia</label>
-        <select class="field-input" id="edit-freq">${['Mensual','Trimestral','Anual'].map(f=>`<option ${f===item.frecuencia?'selected':''}>${f}</option>`).join('')}</select></div>
+    <div class="row-fields">
+      <div class="field"><label>Día de cobro</label>
+        <input id="edit-dia" type="number" min="1" max="31" value="${item.dia_cobro||'1'}"></div>
+      <div class="field"><label>Frecuencia</label>
+        <select id="edit-freq" onchange="toggleMesInicioField('edit-mes-inicio-wrap',this.value)">${['Mensual','Quincenal','Trimestral','Semestral','Anual'].map(f=>`<option ${f===item.frecuencia?'selected':''}>${f}</option>`).join('')}</select></div>
     </div>
-    <div class="field-group"><label class="field-label">Notas</label>
-      <input class="field-input" id="edit-notas" value="${item.notas||''}"></div>`;
+    <div class="field" id="edit-mes-inicio-wrap" style="display:${noMensual?'':'none'}">
+      <label>Mes de inicio del ciclo</label>
+      <select id="edit-mes-inicio">${['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map(m=>`<option ${m===(item.mes_inicio||'Enero')?'selected':''}>${m}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Notas</label>
+      <input id="edit-notas" value="${item.notas||''}" placeholder="opcional"></div>`;
   openEditModal();
 }
 
@@ -2545,6 +2805,7 @@ async function saveEdit() {
         importe: parseFloat(document.getElementById('edit-imp').value) || 0,
         dia_cobro: document.getElementById('edit-dia').value,
         frecuencia: document.getElementById('edit-freq').value,
+        mes_inicio: document.getElementById('edit-mes-inicio')?.value || '',
         activo: item.activo || '✅',
         notas: document.getElementById('edit-notas').value.trim()
       });
@@ -2571,21 +2832,31 @@ async function deleteItem(sheet, fila, btn) {
   } catch(e) { showToast('Error: ' + e.message, 'error'); }
 }
 
+let toastTimer;
 function showToast(msg,type){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+(type||'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.className='toast',3200);}
 </script>
 <meta name="theme-color" content="#0C1018">
 
 <!-- ════ MODAL EDICIÓN ════ -->
 <div id="edit-modal" style="display:none;position:fixed;inset:0;z-index:200;background:var(--md-scrim);align-items:flex-end;justify-content:center" onclick="closeEditModal(event)">
-  <div style="background:var(--md-sc-low);border-radius:28px 28px 0 0;padding:0 0 32px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:center;padding:12px"><div style="width:36px;height:4px;border-radius:2px;background:var(--md-outline-var)"></div></div>
-    <div style="padding:0 20px">
-      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;margin-bottom:20px" id="edit-modal-title">Editar</div>
-      <div id="edit-modal-body"></div>
-      <div style="display:flex;gap:10px;margin-top:20px">
-        <button class="btn btn-tonal" style="flex:1" onclick="closeEditModal()">Cancelar</button>
-        <button class="btn btn-primary" style="flex:1" id="btn-save-edit" onclick="saveEdit()">Guardar</button>
-      </div>
+  <div style="background:var(--md-sc-low);border-radius:28px 28px 0 0;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 -4px 32px rgba(0,0,0,.35)" onclick="event.stopPropagation()">
+    <!-- Handle -->
+    <div style="display:flex;justify-content:center;padding:14px 0 4px">
+      <div style="width:40px;height:4px;border-radius:2px;background:var(--md-outline-var)"></div>
+    </div>
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px">
+      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:20px;color:var(--md-on-surface)" id="edit-modal-title">Editar</div>
+      <button onclick="closeEditModal()" style="background:var(--md-sc-high);border:none;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--md-on-surface-var)">
+        <span class="mi mi-20">close</span>
+      </button>
+    </div>
+    <!-- Body -->
+    <div style="padding:0 20px 16px" id="edit-modal-body"></div>
+    <!-- Buttons -->
+    <div style="display:flex;gap:10px;padding:8px 20px 40px">
+      <button class="btn btn-tonal" style="flex:1" onclick="closeEditModal()"><span class="mi mi-18">close</span> Cancelar</button>
+      <button class="btn btn-primary" style="flex:1" id="btn-save-edit" onclick="saveEdit()"><span class="mi mi-18">check</span> Guardar</button>
     </div>
   </div>
 </div>
