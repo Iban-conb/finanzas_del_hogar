@@ -7,8 +7,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Finanzas del Hogar</title>
 <!-- ── FAVICON ── -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='0' y='0' width='48' height='48' rx='13' fill='%231A3A5C'/><path d='M10 34V16a2 2 0 0 1 2-2h24a2 2 0 0 1 2 2v4H26a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12v4a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2z' fill='%236AB4F0'/><rect x='26' y='20' width='12' height='12' rx='2' fill='%236AB4F0' opacity='.4'/><circle cx='30' cy='26' r='2.2' fill='%236AB4F0'/></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='0' y='0' width='48' height='48' rx='13' fill='%231A3A5C'/><path d='M10 34V16a2 2 0 0 1 2-2h24a2 2 0 0 1 2 2v4H26a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12v4a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2z' fill='%236AB4F0'/><rect x='26' y='20' width='12' height='12' rx='2' fill='%236AB4F0' opacity='.4'/><circle cx='30' cy='26' r='2.2' fill='%236AB4F0'/></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231A3A5C'/><rect x='5' y='10' width='22' height='15' rx='2' fill='none' stroke='%236AB4F0' stroke-width='1.8'/><rect x='5' y='14' width='22' height='4' fill='%236AB4F0' opacity='.35'/><rect x='9' y='19' width='6' height='2.5' rx='1' fill='%236AB4F0'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%231A3A5C'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%236AB4F0' opacity='.25'/><circle cx='23' cy='17' r='1.5' fill='%236AB4F0'/></svg>"><rect x='0' y='0' width='48' height='48' rx='13' fill='%231A3A5C'/><path d='M10 34V16a2 2 0 0 1 2-2h24a2 2 0 0 1 2 2v4H26a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12v4a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2z' fill='%236AB4F0'/><rect x='26' y='20' width='12' height='12' rx='2' fill='%236AB4F0' opacity='.4'/><circle cx='30' cy='26' r='2.2' fill='%236AB4F0'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231A3A5C'/><rect x='5' y='10' width='22' height='15' rx='2' fill='none' stroke='%236AB4F0' stroke-width='1.8'/><rect x='5' y='14' width='22' height='4' fill='%236AB4F0' opacity='.35'/><rect x='9' y='19' width='6' height='2.5' rx='1' fill='%236AB4F0'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%231A3A5C'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%236AB4F0' opacity='.25'/><circle cx='23' cy='17' r='1.5' fill='%236AB4F0'/></svg>"><rect x='0' y='0' width='48' height='48' rx='13' fill='%231A3A5C'/><path d='M10 34V16a2 2 0 0 1 2-2h24a2 2 0 0 1 2 2v4H26a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12v4a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2z' fill='%236AB4F0'/><rect x='26' y='20' width='12' height='12' rx='2' fill='%236AB4F0' opacity='.4'/><circle cx='30' cy='26' r='2.2' fill='%236AB4F0'/></svg>">
 <!-- ── FONTS ── -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1700,7 +1700,8 @@ const CAT_COLORS = new Proxy({}, { get: (t,p)=>getCatColor(p) });
 
 let state = {
   get scriptUrl() { return cfg('scriptUrl'); },
-  get myName()    { return localStorage.getItem('miUsuario') || localStorage.getItem('nombre1') || 'Persona 1'; },
+  get myName()    { return localStorage.getItem('miUsuario') || localStorage.getItem('nombre1') || 'Usuario 1'; },
+  get p2Name()    { const usrs=getUsuariosArr(); const yo=localStorage.getItem('miUsuario'); return usrs.find(u=>u.nombre!==yo)?.nombre || localStorage.getItem('nombre2') || 'Usuario 2'; },
   mes:  localStorage.getItem('mes')  || MESES[new Date().getMonth()],
   anio: parseInt(localStorage.getItem('anio')) || new Date().getFullYear(),
   currentView: 'dashboard',
@@ -1714,8 +1715,8 @@ let state = {
 // Helpers para usuarios y categorías
 function getUsuariosArr() {
   if (state.usuarios && state.usuarios.length) return state.usuarios;
-  const n1 = localStorage.getItem('nombre1') || 'Persona 1';
-  const n2 = localStorage.getItem('nombre2') || 'Persona 2';
+  const n1 = localStorage.getItem('nombre1') || 'Usuario 1';
+  const n2 = localStorage.getItem('nombre2') || 'Usuario 2';
   return [{ nombre: n1 }, { nombre: n2 }];
 }
 function getCategoriasArr() {
@@ -2046,7 +2047,26 @@ function renderDashboard(d) {
 async function loadDiarios() {
   const el=document.getElementById('diarios-content');
   el.innerHTML='<div class="loader"></div>';
-  try { el.innerHTML=renderDiarios((await api({action:'getDiarios',mes:state.mes,anio:state.anio})).data||[]); }
+  try {
+    // Cargar gastos diarios y recurrentes en paralelo
+    const [diariosRes, recRes] = await Promise.all([
+      api({action:'getDiarios', mes:state.mes, anio:state.anio}),
+      api({action:'getRecurrentes'})
+    ]);
+    const diarios = diariosRes.data || [];
+    // Filtrar recurrentes que tocan este mes y cuyo día ya llegó
+    const hoy = new Date();
+    const esMesActual = state.mes === MESES[hoy.getMonth()] && state.anio === hoy.getFullYear();
+    const diaHoy = hoy.getDate();
+    const recs = (recRes.data || []).filter(r => {
+      if (!recTocaEnMes(r, state.mes, state.anio)) return false;
+      const dia = parseInt(r.dia_cobro) || 1;
+      // Si es mes actual: mostrar solo si el día ya llegó o llegó hoy
+      // Si es mes pasado: mostrar todos los que tocaron
+      return !esMesActual || dia <= diaHoy;
+    });
+    el.innerHTML = renderDiarios(diarios, recs);
+  }
   catch(e) { el.innerHTML=renderError(e); }
 }
 
@@ -2074,49 +2094,70 @@ function fmtFecha(raw) {
   if (iso) return iso[3]+'/'+iso[2]+'/'+iso[1];
   return s;
 }
-function renderDiarios(items) {
-  if (!items.length) return `<div class="empty"><div style="margin-bottom:12px"><span class="mi mi-40" style="color:var(--md-outline)">shopping_cart</span></div><p>Sin gastos en ${state.mes} ${state.anio}.<br>Usa el botón <strong>＋</strong> para añadir.</p></div>`;
-  window._diariosCache = items;
+function _renderExpenseItem(item, idx, isRec=false) {
   const fmt=n=>(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
-  const total=items.reduce((s,i)=>s+(i.importe||0),0);
-  const list=items.map((item,idx)=>{
-    const color=CAT_COLORS[item.categoria]||'var(--cat-other)';
-    // Quien: domiciliaciones no tienen persona real
-    const esDomiciliacion = item.pago === 'Domiciliación';
-    const quienLabel = esDomiciliacion ? '' : (item.quien || '');
-    const quienIcon  = esDomiciliacion ? '' :
-      item.quien === state.myName  ? '<span class="mi mi-14" style="color:var(--cat-food)">person</span>' :
-      item.quien === state.p2Name  ? '<span class="mi mi-14" style="color:var(--cat-health)">person</span>' :
-      '<span class="mi mi-14" style="color:var(--md-on-surface-var)">group</span>';
-    const pagoIcon =
-      item.pago==='Domiciliación'   ? 'account_balance' :
-      item.pago==='Retirada cajero' ? 'local_atm' :
-      item.pago==='Bizum'           ? 'send_money' :
-      item.pago==='Efectivo'        ? 'payments' :
-      item.pago==='Transferencia'   ? 'swap_horiz' : 'credit_card';
-    const fechaFmt = fmtFecha(item.fecha);
-    return `<div class="expense-item" style="gap:8px">
-      <div class="expense-icon" style="background:color-mix(in srgb,${color} 18%,transparent);color:${color}"><span class="mi mi-outline" style="font-size:22px">${CAT_ICONS[item.categoria]||'inventory_2'}</span></div>
-      <div class="expense-info" style="flex:1;min-width:0">
-        <div class="expense-desc">${item.descripcion||'—'}</div>
-        <div class="expense-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px">
-          ${quienLabel ? `<span style="display:flex;align-items:center;gap:2px">${quienIcon} ${quienLabel}</span><span style="color:var(--md-outline-var)">·</span>` : ''}
-          <span style="display:flex;align-items:center;gap:3px"><span class="mi mi-14">calendar_today</span> ${fechaFmt}</span>
-          <span style="color:var(--md-outline-var)">·</span>
-          <span style="display:flex;align-items:center;gap:3px"><span class="mi mi-14">${pagoIcon}</span> ${item.pago||''}</span>
-        </div>
+  const color=CAT_COLORS[item.categoria]||'var(--cat-other)';
+  const esDomiciliacion = item.pago === 'Domiciliación' || isRec;
+  const pago = isRec ? 'Domiciliación' : (item.pago || '');
+  const quienLabel = esDomiciliacion ? '' : (item.quien || '');
+  const quienIcon  = esDomiciliacion ? '' :
+    item.quien === state.myName ? '<span class="mi mi-14" style="color:var(--md-primary)">person</span>' :
+    item.quien === state.p2Name ? '<span class="mi mi-14" style="color:#4ECDC4">person</span>' :
+    '<span class="mi mi-14" style="color:var(--md-on-surface-var)">group</span>';
+  const pagoIcon =
+    pago==='Domiciliación'   ? 'account_balance' :
+    pago==='Retirada cajero' ? 'local_atm' :
+    pago==='Bizum'           ? 'send_money' :
+    pago==='Efectivo'        ? 'payments' :
+    pago==='Transferencia'   ? 'swap_horiz' : 'credit_card';
+  const fechaFmt = isRec
+    ? `día ${item.dia_cobro||'?'}`
+    : fmtFecha(item.fecha);
+  const recBadge = isRec
+    ? `<span style="background:color-mix(in srgb,var(--cat-leisure) 15%,transparent);color:var(--cat-leisure);font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px">FIJO</span>`
+    : '';
+  const btns = isRec
+    ? `<div style="width:28px;flex-shrink:0"></div>` // sin botones en recurrentes-vista
+    : `<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
+        <button onclick="openEditDiario(_diariosCache[${idx}])" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-on-surface-var)"><span class="mi mi-18">edit</span></button>
+        <button onclick="deleteItem('diarios',${item.fila},this)" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)"><span class="mi mi-18">delete</span></button>
+      </div>`;
+  return `<div class="expense-item" style="gap:8px${isRec?';opacity:.85':''}">
+    <div class="expense-icon" style="background:color-mix(in srgb,${color} 18%,transparent);color:${color}"><span class="mi mi-outline" style="font-size:22px">${CAT_ICONS[item.categoria]||'inventory_2'}</span></div>
+    <div class="expense-info" style="flex:1;min-width:0">
+      <div class="expense-desc" style="display:flex;align-items:center;gap:6px">${isRec?(item.nombre||'—'):(item.descripcion||'—')} ${recBadge}</div>
+      <div class="expense-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px">
+        ${quienLabel?`<span style="display:flex;align-items:center;gap:2px">${quienIcon} ${quienLabel}</span><span style="color:var(--md-outline-var)">·</span>`:''}
+        <span style="display:flex;align-items:center;gap:3px"><span class="mi mi-14">calendar_today</span> ${fechaFmt}</span>
+        <span style="color:var(--md-outline-var)">·</span>
+        <span style="display:flex;align-items:center;gap:3px"><span class="mi mi-14">${pagoIcon}</span> ${pago||'—'}</span>
       </div>
-      <div class="expense-amount neg" style="flex-shrink:0">${fmt(item.importe)}</div>
-      <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">
-        <button onclick="openEditDiario(_diariosCache[${idx}])" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-on-surface-var)" title="Editar"><span class="mi mi-18">edit</span></button>
-        <button onclick="deleteItem('diarios',${item.fila},this)" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;color:var(--md-error)" title="Eliminar"><span class="mi mi-18">delete</span></button>
-      </div>
-    </div>`;
-  }).join('');
+    </div>
+    <div class="expense-amount neg" style="flex-shrink:0">${fmt(item.importe)}</div>
+    ${btns}
+  </div>`;
+}
+
+function renderDiarios(items, recs=[]) {
+  const fmt=n=>(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
+  window._diariosCache = items;
+  const totalDiarios = items.reduce((s,i)=>s+(i.importe||0),0);
+  const totalRecs    = recs.reduce((s,r)=>s+(r.importe||0),0);
+  const total = totalDiarios + totalRecs;
+  const count = items.length + recs.length;
+  if (!count) return `<div class="empty"><div style="margin-bottom:12px"><span class="mi mi-40" style="color:var(--md-outline)">shopping_cart</span></div><p>Sin gastos en ${state.mes} ${state.anio}.<br>Usa el botón <strong>＋</strong> para añadir.</p></div>`;
+  // Recurrentes primero (ordenados por día), luego diarios
+  const recHtml  = recs.map(r=>_renderExpenseItem(r, -1, true)).join('');
+  const diasHtml = items.map((item,idx)=>_renderExpenseItem(item, idx, false)).join('');
+  const recSection = recs.length ? `
+    <div style="font-size:11px;font-weight:700;color:var(--cat-leisure);text-transform:uppercase;letter-spacing:.5px;padding:0 0 8px">
+      <span class="mi mi-14">autorenew</span> Fijos del mes
+    </div>${recHtml}
+    ${items.length?'<div style="height:1px;background:var(--md-outline-var);opacity:.3;margin:10px 0"></div>':''}` : '';
   return `<div class="card" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:13px;color:var(--md-on-surface-var)">${state.mes} · ${items.length} gastos</div>
+    <div style="font-size:13px;color:var(--md-on-surface-var)">${state.mes} · ${count} gastos</div>
     <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;color:var(--cat-transport)">${fmt(total)}</div>
-  </div><div class="card">${list}</div>`;
+  </div><div class="card">${recSection}${diasHtml}</div>`;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -2381,8 +2422,8 @@ async function saveSetup() {
   btn.disabled = true; btn.innerHTML = '<span class="mi mi-18">sync</span> Guardando...';
   // Buscar nombre1/nombre2 a partir de la lista de usuarios
   const usuarios = getUsuariosArr();
-  const n1 = usuarios[0]?.nombre || 'Persona 1';
-  const n2 = usuarios[1]?.nombre || 'Persona 2';
+  const n1 = usuarios[0]?.nombre || 'Usuario 1';
+  const n2 = usuarios[1]?.nombre || 'Usuario 2';
   localStorage.setItem('nombre1', n1);
   localStorage.setItem('nombre2', n2);
   localStorage.setItem('miUsuario', _setupSelectedUser);
@@ -2453,7 +2494,7 @@ async function deleteCat(fila, nombre) {
 const RK_MAGIC='HFR1:';
 function exportRecoveryKey() {
   if (!isConfigured()){showToast('Configura la app primero','error');return;}
-  const payload={v:3,pin:localStorage.getItem('appPin')||'',yo:localStorage.getItem('miUsuario')||'',u:localStorage.getItem('scriptUrl')||'',n1:localStorage.getItem('nombre1')||'Persona 1',n2:localStorage.getItem('nombre2')||'Persona 2',ts:new Date().toISOString().slice(0,10)};
+  const payload={v:3,pin:localStorage.getItem('appPin')||'',yo:localStorage.getItem('miUsuario')||'',u:localStorage.getItem('scriptUrl')||'',n1:localStorage.getItem('nombre1')||'Usuario 1',n2:localStorage.getItem('nombre2')||'Usuario 2',ts:new Date().toISOString().slice(0,10)};
   const encoded=RK_MAGIC+btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
   const blob=new Blob([encoded],{type:'text/plain'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hogar_recovery_key.txt'; a.click(); URL.revokeObjectURL(a.href);
@@ -2483,7 +2524,7 @@ function applyRecoveryKeySetup() {
   localStorage.setItem('scriptUrl',d.u||'');
   localStorage.setItem('appPin', d.pin||d.p1||d.p||'');
   if (d.yo) localStorage.setItem('miUsuario',d.yo);
-  localStorage.setItem('nombre1',d.n1||'Persona 1'); localStorage.setItem('nombre2',d.n2||'Persona 2');
+  localStorage.setItem('nombre1',d.n1||'Usuario 1'); localStorage.setItem('nombre2',d.n2||'Usuario 2');
   localStorage.setItem('configured','1'); updatePersonaSelects();
   showToast('Cuenta restaurada ✓','success');
   setTimeout(()=>{document.getElementById('pin-screen').classList.add('hidden');showView('dashboard');loadSettings();},800);
@@ -2501,7 +2542,7 @@ function applyRecoveryKey() {
   localStorage.setItem('scriptUrl',d.u||'');
   localStorage.setItem('appPin', d.pin||d.p1||d.p||'');
   if (d.yo) localStorage.setItem('miUsuario',d.yo);
-  localStorage.setItem('nombre1',d.n1||'Persona 1'); localStorage.setItem('nombre2',d.n2||'Persona 2');
+  localStorage.setItem('nombre1',d.n1||'Usuario 1'); localStorage.setItem('nombre2',d.n2||'Usuario 2');
   localStorage.setItem('configured','1'); updatePersonaSelects(); loadSettings();
   showToast('Configuración restaurada ✓','success');
 }
@@ -2519,8 +2560,8 @@ function loadSettings() {
   // Píldoras "Soy yo"
   const yoSoy = document.getElementById('yo-soy-pills');
   if (yoSoy) {
-    const n1 = localStorage.getItem('nombre1')||'Persona 1';
-    const n2 = localStorage.getItem('nombre2')||'Persona 2';
+    const n1 = localStorage.getItem('nombre1')||'Usuario 1';
+    const n2 = localStorage.getItem('nombre2')||'Usuario 2';
     const yo = localStorage.getItem('miUsuario')||n1;
     yoSoy.innerHTML = [n1, n2].map(n =>
       `<button onclick="setMiUsuario('${n}')" style="padding:8px 20px;border-radius:20px;border:2px solid ${n===yo?'var(--md-primary)':'var(--md-outline-var)'};background:${n===yo?'var(--md-primary-container)':'transparent'};color:${n===yo?'var(--md-on-primary-cont)':'var(--md-on-surface)'};font-family:'Nunito',sans-serif;font-weight:${n===yo?'700':'500'};cursor:pointer;font-size:14px;transition:all .2s">${n=== yo?'✓ ':'' }${n}</button>`

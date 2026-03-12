@@ -1,65 +1,140 @@
 // ============================================================
 //  CONTROL FINANCIERO DEL HOGAR — Google Apps Script Backend
+//  Pega este código en: script.google.com → nuevo proyecto
+//  ⚠️ IMPORTANTE: Haz "Nueva implementación" cada vez que lo cambies
 // ============================================================
 
 // ⚠️ CAMBIA ESTE ID por el de TU Google Sheet
 var SHEET_ID = "PON_AQUI_EL_ID_DE_TU_GOOGLE_SHEET";
 
-// Fila donde empiezan los datos
+// Fila donde empiezan los datos (fila 5 en tu plantilla)
 var DATA_START_ROW = 5;
-
-// ─────────────────────────────────────────────────────────────
-//  ÍNDICES DE COLUMNAS (verificados contra la plantilla real)
-//  Todas las hojas empiezan en columna B (índice 0 = col A vacía)
-//
-//  💰 INGRESOS:     [0]=A  [1]=# [2]=MES [3]=AÑO [4]=PERSONA [5]=CONCEPTO [6]=IMPORTE [7]=NOTAS
-//  📅 RECURRENTES:  [0]=A  [1]=# [2]=NOMBRE [3]=CATEGORÍA [4]=IMPORTE [5]=DÍA [6]=FRECUENCIA [7]=ACTIVO [8]=NOTAS
-//  🛒 DIARIOS:      [0]=A  [1]=# [2]=MES [3]=AÑO [4]=FECHA [5]=CATEGORÍA [6]=DESCRIPCIÓN [7]=IMPORTE [8]=QUIÉN [9]=PAGADO_CON [10]=NOTAS
-// ─────────────────────────────────────────────────────────────
-
-// ─────────────────────────────────────────────────────────────
-//  BUSCA UNA PESTAÑA POR PALABRA CLAVE (ignora emojis y case)
-// ─────────────────────────────────────────────────────────────
-function getSheet(ss, keyword) {
-  var kw = keyword.toUpperCase();
-  var sheets = ss.getSheets();
-  for (var i = 0; i < sheets.length; i++) {
-    if (sheets[i].getName().toUpperCase().indexOf(kw) !== -1) {
-      return sheets[i];
-    }
-  }
-  throw new Error("Pestaña no encontrada: '" + keyword + "'. Disponibles: " +
-    sheets.map(function(s) { return s.getName(); }).join(" | "));
-}
 
 // ─────────────────────────────────────────────────────────────
 //  PUNTO DE ENTRADA
 // ─────────────────────────────────────────────────────────────
 function doGet(e) {
   try {
-    var action = e.parameter.action || "";
+    var action   = e.parameter.action   || "";
+    var callback = e.parameter.callback || "";
     var result;
+
     switch (action) {
-      case "ping":         result = { ok: true, msg: "Conexión correcta" }; break;
-      case "getUsuarios":  result = getUsuarios(); break;
-      case "getCategorias": result = getCategorias(); break;
-      case "addCategoria": result = addCategoria(e.parameter); break;
-      case "deleteCategoria": result = deleteCategoria(parseInt(e.parameter.fila)); break;
-      case "getSummary":   result = getSummary(e.parameter.mes, parseInt(e.parameter.anio)); break;
-      case "getDiarios":   result = getDiarios(e.parameter.mes, parseInt(e.parameter.anio)); break;
-      case "getIngresos":  result = getIngresos(e.parameter.mes, parseInt(e.parameter.anio)); break;
-      case "getRecurrentes": result = getRecurrentes(); break;
-      case "addDiario":    result = addDiario(e.parameter); break;
-      case "addIngreso":   result = addIngreso(e.parameter); break;
-      case "addRecurrente": result = addRecurrente(e.parameter); break;
-      case "toggleRecurrente": result = toggleRecurrente(parseInt(e.parameter.fila), e.parameter.estado); break;
-      case "deleteRow":    result = deleteRow(e.parameter.sheet, parseInt(e.parameter.fila)); break;
-      default: result = { error: "Acción desconocida: " + action };
+      case "ping":
+        result = { ok: true, msg: "Conexión correcta ✅" };
+        break;
+      case "getSummary":
+        result = getSummary(e.parameter.mes, parseInt(e.parameter.anio));
+        break;
+      case "getDiarios":
+        result = getDiarios(e.parameter.mes, parseInt(e.parameter.anio));
+        break;
+      case "getIngresos":
+        result = getIngresos(e.parameter.mes, parseInt(e.parameter.anio));
+        break;
+      case "getRecurrentes":
+        result = getRecurrentes();
+        break;
+      case "getUsuarios":
+        result = getUsuarios();
+        break;
+      case "getCategorias":
+        result = getCategorias();
+        break;
+      case "addDiario":
+        result = addDiario(e.parameter);
+        break;
+      case "addIngreso":
+        result = addIngreso(e.parameter);
+        break;
+      case "addRecurrente":
+        result = addRecurrente(e.parameter);
+        break;
+      case "toggleRecurrente":
+        result = toggleRecurrente(parseInt(e.parameter.fila), e.parameter.estado);
+        break;
+      case "deleteRow":
+        result = deleteRow(e.parameter.sheet, parseInt(e.parameter.fila));
+        break;
+      case "addCategoria":
+        result = addCategoria(e.parameter.nombre, e.parameter.icono);
+        break;
+      case "deleteCategoria":
+        result = deleteCategoriaRow(parseInt(e.parameter.fila));
+        break;
+      default:
+        result = { ok: false, error: "Acción desconocida: " + action };
     }
-    return jsonResponse(result, e.parameter.callback);
+
+    return jsonResponse(result, callback);
+
   } catch (err) {
-    return jsonResponse({ error: err.toString() }, e.parameter.callback);
+    var cb = (e && e.parameter && e.parameter.callback) || "";
+    return jsonResponse({ ok: false, error: err.toString() }, cb);
   }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  USUARIOS — pestaña 👥 USUARIOS
+//  Columnas: B=# C=NOMBRE D=ACTIVO(✅/❌)
+// ─────────────────────────────────────────────────────────────
+function getUsuarios() {
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "usuarios");
+  if (!sh) return { ok: false, msg: "Pestaña USUARIOS no encontrada" };
+  var data = sh.getDataRange().getValues();
+  var result = [];
+  for (var i = DATA_START_ROW - 1; i < data.length; i++) {
+    var r = data[i];
+    var nombre = String(r[2] || "").trim();
+    if (!nombre) continue;
+    if (String(r[3] || "").trim() === "❌") continue;
+    result.push({ fila: i + 1, nombre: nombre });
+  }
+  return { ok: true, data: result };
+}
+
+// ─────────────────────────────────────────────────────────────
+//  CATEGORÍAS — pestaña 🏷️ CATEGORIAS
+//  Columnas: B=# C=NOMBRE D=ICONO E=ACTIVO
+// ─────────────────────────────────────────────────────────────
+function getCategorias() {
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "categorias");
+  if (!sh) return { ok: false, msg: "Pestaña CATEGORIAS no encontrada" };
+  var data = sh.getDataRange().getValues();
+  var result = [];
+  for (var i = DATA_START_ROW - 1; i < data.length; i++) {
+    var r = data[i];
+    var nombre = String(r[2] || "").trim();
+    if (!nombre) continue;
+    if (String(r[4] || "").trim() === "❌") continue;
+    result.push({ fila: i + 1, nombre: nombre, icono: String(r[3] || "inventory_2").trim() });
+  }
+  return { ok: true, data: result };
+}
+
+function addCategoria(nombre, icono) {
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "categorias");
+  if (!sh) return { ok: false, msg: "Pestaña CATEGORIAS no encontrada" };
+  // Buscar la primera fila vacía dentro del rango de datos (desde DATA_START_ROW)
+  var data = sh.getDataRange().getValues();
+  var insertRow = -1;
+  for (var i = DATA_START_ROW - 1; i < data.length; i++) {
+    var nombre_celda = String(data[i][2] || "").trim();
+    if (!nombre_celda) { insertRow = i + 1; break; }
+  }
+  // Si no hay hueco, añadir al final
+  if (insertRow === -1) insertRow = getLastDataRow(sh) + 1;
+  // Calcular el número # (posición en la lista)
+  var num = insertRow - DATA_START_ROW + 1;
+  sh.getRange(insertRow, 2, 1, 4).setValues([[num, nombre || "", icono || "inventory_2", "✅"]]);
+  return { ok: true, msg: "Categoría añadida en fila " + insertRow };
+}
+
+function deleteCategoriaRow(fila) {
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "categorias");
+  if (!sh) return { ok: false, msg: "Hoja no encontrada" };
+  sh.deleteRow(fila);
+  return { ok: true };
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -68,59 +143,73 @@ function doGet(e) {
 function getSummary(mes, anio) {
   var ss = SpreadsheetApp.openById(SHEET_ID);
 
-  // — INGRESOS —
-  // [2]=MES  [3]=AÑO  [4]=PERSONA  [6]=IMPORTE
-  var dataIng = getSheet(ss, "INGRESOS").getDataRange().getValues();
+  // Leer nombres reales de usuarios
+  var usrs = getUsuarios();
+  var n1 = (usrs.ok && usrs.data[0]) ? usrs.data[0].nombre : "";
+  var n2 = (usrs.ok && usrs.data[1]) ? usrs.data[1].nombre : "";
+
+  var shIngresos   = getSheet(ss, "ingresos");
+  var dataIngresos = shIngresos.getDataRange().getValues();
   var totalIngresos = 0, ingP1 = 0, ingP2 = 0;
-  for (var i = DATA_START_ROW - 1; i < dataIng.length; i++) {
-    var r = dataIng[i];
-    if (r[2] == mes && parseInt(r[3]) == anio) {
-      var imp = parseFloat(r[6]) || 0;
+  for (var i = DATA_START_ROW - 1; i < dataIngresos.length; i++) {
+    var row = dataIngresos[i];
+    if (row[2] == mes && parseInt(row[3]) == anio) {
+      var imp = parseFloat(row[6]) || 0;
       totalIngresos += imp;
-      var persona = String(r[4] || "").trim();
-      if (persona == "Persona 1") ingP1 += imp;
-      else if (persona == "Persona 2") ingP2 += imp;
+      if (n1 && row[4] == n1) ingP1 += imp;
+      if (n2 && row[4] == n2) ingP2 += imp;
     }
   }
 
-  // — RECURRENTES ACTIVOS —
-  // [3]=CATEGORÍA  [4]=IMPORTE  [7]=ACTIVO
-  var dataRec = getSheet(ss, "RECURRENTES").getDataRange().getValues();
+  var shRec   = getSheet(ss, "recurrentes");
+  var dataRec = shRec.getDataRange().getValues();
+  var MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   var totalRec = 0, recPorCat = {};
   for (var i = DATA_START_ROW - 1; i < dataRec.length; i++) {
-    var r = dataRec[i];
-    if (String(r[7]).trim() == "✅" && parseFloat(r[4]) > 0) {
-      var imp = parseFloat(r[4]);
-      var cat = String(r[3] || "Otros").trim();
-      totalRec += imp;
-      recPorCat[cat] = (recPorCat[cat] || 0) + imp;
+    var row = dataRec[i];
+    if (row[7] !== "✅" || !(parseFloat(row[4]) > 0)) continue;
+    var frec      = String(row[6] || "Mensual").trim();
+    var mesInicio = String(row[8] || "").trim();
+    // Comprobar si toca cobrar este mes
+    var toca = true;
+    if (frec !== "Mensual" && frec !== "Quincenal" && mesInicio) {
+      var idxActual = MESES_ES.indexOf(mes);
+      var idxInicio = MESES_ES.indexOf(mesInicio);
+      if (idxActual !== -1 && idxInicio !== -1) {
+        var diff = ((idxActual - idxInicio) % 12 + 12) % 12;
+        if (frec === "Trimestral") toca = diff % 3 === 0;
+        else if (frec === "Semestral")  toca = diff % 6 === 0;
+        else if (frec === "Anual")      toca = diff === 0;
+      }
     }
+    if (!toca) continue;
+    var imp = parseFloat(row[4]) || 0;
+    totalRec += imp;
+    var cat = row[3] || "Otros";
+    recPorCat[cat] = (recPorCat[cat] || 0) + imp;
   }
 
-  // — GASTOS DIARIOS —
-  // [2]=MES  [3]=AÑO  [5]=CATEGORÍA  [7]=IMPORTE
-  var dataDia = getSheet(ss, "DIARIOS").getDataRange().getValues();
+  var shDiarios   = getSheet(ss, "diarios");
+  var dataDiarios = shDiarios.getDataRange().getValues();
   var totalDiarios = 0, diasPorCat = {};
-  for (var i = DATA_START_ROW - 1; i < dataDia.length; i++) {
-    var r = dataDia[i];
-    if (r[2] == mes && parseInt(r[3]) == anio && parseFloat(r[7]) > 0) {
-      var imp = parseFloat(r[7]);
-      var cat = String(r[5] || "Otros").trim();
+  for (var i = DATA_START_ROW - 1; i < dataDiarios.length; i++) {
+    var row = dataDiarios[i];
+    if (row[2] == mes && parseInt(row[3]) == anio && parseFloat(row[7]) > 0) {
+      var imp = parseFloat(row[7]) || 0;
+      var cat = row[5] || "Otros";
       totalDiarios += imp;
       diasPorCat[cat] = (diasPorCat[cat] || 0) + imp;
     }
   }
 
-  // — COMBINAR CATEGORÍAS — (union de todas las categorías encontradas)
   var allCats = {};
-  Object.keys(recPorCat).forEach(function(c){ allCats[c]=1; });
-  Object.keys(diasPorCat).forEach(function(c){ allCats[c]=1; });
-  // Asegurar categorías base aunque estén vacías
-  ["Hogar","Suministros","Alimentación","Transporte","Ocio","Salud","Ropa","Tecnología","Otros"].forEach(function(c){ allCats[c]=1; });
+  Object.keys(recPorCat).forEach(function(c)  { allCats[c] = true; });
+  Object.keys(diasPorCat).forEach(function(c) { allCats[c] = true; });
   var porCat = {};
   Object.keys(allCats).forEach(function(c) {
     porCat[c] = {
-      recurrente: recPorCat[c] || 0,
+      recurrente: recPorCat[c]  || 0,
       diario:     diasPorCat[c] || 0,
       total:      (recPorCat[c] || 0) + (diasPorCat[c] || 0)
     };
@@ -128,7 +217,7 @@ function getSummary(mes, anio) {
 
   var totalGastos = totalRec + totalDiarios;
   return {
-    mes: mes, anio: anio,
+    ok: true, mes: mes, anio: anio,
     ingresos: { total: totalIngresos, persona1: ingP1, persona2: ingP2 },
     gastos:   { total: totalGastos, recurrentes: totalRec, diarios: totalDiarios },
     balance:  totalIngresos - totalGastos,
@@ -139,53 +228,46 @@ function getSummary(mes, anio) {
 
 // ─────────────────────────────────────────────────────────────
 //  GASTOS DIARIOS
-//  [1]=# [2]=MES [3]=AÑO [4]=FECHA [5]=CAT [6]=DESC [7]=IMPORTE [8]=QUIÉN [9]=PAGO [10]=NOTAS
 // ─────────────────────────────────────────────────────────────
 function getDiarios(mes, anio) {
-  var data = getSheet(SpreadsheetApp.openById(SHEET_ID), "DIARIOS").getDataRange().getValues();
+  var sh   = getSheet(SpreadsheetApp.openById(SHEET_ID), "diarios");
+  var data = sh.getDataRange().getValues();
   var result = [];
   for (var i = DATA_START_ROW - 1; i < data.length; i++) {
     var r = data[i];
-    if (!r[2] && !r[7]) continue; // fila vacía
+    if (!r[2] && !r[7]) continue;
     if (mes  && r[2] != mes)           continue;
     if (anio && parseInt(r[3]) != anio) continue;
     result.push({
-      fila:       i + 1,
-      mes:        r[2],  anio:      r[3],
-      fecha:      r[4],  categoria: r[5],
-      descripcion:r[6],  importe:   parseFloat(r[7]) || 0,
-      quien:      r[8],  pago:      r[9],
-      notas:      r[10]
+      fila: i + 1,
+      mes: r[2], anio: r[3], fecha: r[4],
+      categoria: r[5], descripcion: r[6],
+      importe: parseFloat(r[7]) || 0,
+      quien: r[8], pago: r[9], notas: r[10]
     });
   }
   return { ok: true, data: result.reverse() };
 }
 
 function addDiario(p) {
-  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "DIARIOS");
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "diarios");
   var newRow = getLastDataRow(sh) + 1;
-  // Escribe desde col B (columna 2): #  MES  AÑO  FECHA  CAT  DESC  IMP  QUIÉN  PAGO  NOTAS
   sh.getRange(newRow, 2, 1, 10).setValues([[
-    "",
-    p.mes   || "",
-    parseInt(p.anio) || new Date().getFullYear(),
+    "", p.mes || "", parseInt(p.anio) || new Date().getFullYear(),
     p.fecha || Utilities.formatDate(new Date(), "Europe/Madrid", "dd/MM/yyyy"),
-    p.categoria  || "Otros",
-    p.descripcion || "",
+    p.categoria || "Otros", p.descripcion || "",
     parseFloat(p.importe) || 0,
-    p.quien || "Persona 1",
-    p.pago  || "Tarjeta",
-    p.notas || ""
+    p.quien || "", p.pago || "Tarjeta", p.notas || ""
   ]]);
-  return { ok: true, msg: "Gasto añadido en fila " + newRow };
+  return { ok: true };
 }
 
 // ─────────────────────────────────────────────────────────────
 //  INGRESOS
-//  [1]=# [2]=MES [3]=AÑO [4]=PERSONA [5]=CONCEPTO [6]=IMPORTE [7]=NOTAS
 // ─────────────────────────────────────────────────────────────
 function getIngresos(mes, anio) {
-  var data = getSheet(SpreadsheetApp.openById(SHEET_ID), "INGRESOS").getDataRange().getValues();
+  var sh   = getSheet(SpreadsheetApp.openById(SHEET_ID), "ingresos");
+  var data = sh.getDataRange().getValues();
   var result = [];
   for (var i = DATA_START_ROW - 1; i < data.length; i++) {
     var r = data[i];
@@ -193,7 +275,8 @@ function getIngresos(mes, anio) {
     if (mes  && r[2] != mes)           continue;
     if (anio && parseInt(r[3]) != anio) continue;
     result.push({
-      fila: i + 1, mes: r[2], anio: r[3],
+      fila: i + 1,
+      mes: r[2], anio: r[3],
       persona: r[4], concepto: r[5],
       importe: parseFloat(r[6]) || 0, notas: r[7]
     });
@@ -202,62 +285,52 @@ function getIngresos(mes, anio) {
 }
 
 function addIngreso(p) {
-  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "INGRESOS");
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "ingresos");
   var newRow = getLastDataRow(sh) + 1;
-  // Escribe desde col B: #  MES  AÑO  PERSONA  CONCEPTO  IMPORTE  NOTAS
   sh.getRange(newRow, 2, 1, 7).setValues([[
-    "",
-    p.mes  || "",
-    parseInt(p.anio) || new Date().getFullYear(),
-    p.persona  || "Persona 1",
-    p.concepto || "",
-    parseFloat(p.importe) || 0,
-    p.notas || ""
+    "", p.mes || "", parseInt(p.anio) || new Date().getFullYear(),
+    p.persona || "", p.concepto || "Sueldo neto",
+    parseFloat(p.importe) || 0, p.notas || ""
   ]]);
-  return { ok: true, msg: "Ingreso añadido en fila " + newRow };
+  return { ok: true };
 }
 
 // ─────────────────────────────────────────────────────────────
 //  RECURRENTES
-//  [1]=# [2]=NOMBRE [3]=CATEGORÍA [4]=IMPORTE [5]=DÍA [6]=FRECUENCIA [7]=ACTIVO [8]=NOTAS
 // ─────────────────────────────────────────────────────────────
 function getRecurrentes() {
-  var data = getSheet(SpreadsheetApp.openById(SHEET_ID), "RECURRENTES").getDataRange().getValues();
+  var sh   = getSheet(SpreadsheetApp.openById(SHEET_ID), "recurrentes");
+  var data = sh.getDataRange().getValues();
   var result = [];
   for (var i = DATA_START_ROW - 1; i < data.length; i++) {
     var r = data[i];
     if (!r[2] && !r[4]) continue;
     result.push({
-      fila:       i + 1,
-      nombre:     r[2], categoria:  r[3],
-      importe:    parseFloat(r[4]) || 0,
-      dia_cobro:  r[5], frecuencia: r[6],
-      activo:     r[7], notas:      r[8]
+      fila: i + 1,
+      nombre: r[2], categoria: r[3],
+      importe: parseFloat(r[4]) || 0,
+      dia_cobro: r[5], frecuencia: r[6],
+      activo: r[7], mes_inicio: String(r[8]||'').trim(), notas: String(r[9]||'').trim()
     });
   }
   return { ok: true, data: result };
 }
 
 function addRecurrente(p) {
-  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "RECURRENTES");
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "recurrentes");
   var newRow = getLastDataRow(sh) + 1;
-  // Escribe desde col B: #  NOMBRE  CAT  IMPORTE  DÍA  FREQ  ACTIVO  NOTAS
-  sh.getRange(newRow, 2, 1, 8).setValues([[
-    "",
-    p.nombre     || "",
-    p.categoria  || "Otros",
-    parseFloat(p.importe) || 0,
-    parseInt(p.dia_cobro) || 1,
-    p.frecuencia || "Mensual",
-    "✅",
-    p.notas || ""
+  sh.getRange(newRow, 2, 1, 9).setValues([[
+    "", p.nombre || "", p.categoria || "Otros",
+    parseFloat(p.importe) || 0, parseInt(p.dia_cobro) || 1,
+    p.frecuencia || "Mensual", p.activo || "✅",
+    p.mes_inicio || "", p.notas || ""
   ]]);
-  return { ok: true, msg: "Recurrente añadido" };
+  return { ok: true };
 }
 
 function toggleRecurrente(fila, estado) {
-  // ACTIVO está en col H = columna 8 (1-based)
-  getSheet(SpreadsheetApp.openById(SHEET_ID), "RECURRENTES").getRange(fila, 8).setValue(estado);
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "recurrentes");
+  sh.getRange(fila, 8).setValue(estado);
   return { ok: true };
 }
 
@@ -265,89 +338,26 @@ function toggleRecurrente(fila, estado) {
 //  BORRAR FILA
 // ─────────────────────────────────────────────────────────────
 function deleteRow(sheetKey, fila) {
-  var validKeys = ["diarios", "ingresos", "recurrentes"];
-  if (validKeys.indexOf(sheetKey) === -1) return { error: "Clave no válida: " + sheetKey };
-  getSheet(SpreadsheetApp.openById(SHEET_ID), sheetKey.toUpperCase()).deleteRow(fila);
-  return { ok: true, msg: "Fila " + fila + " eliminada" };
-}
-
-// ─────────────────────────────────────────────────────────────
-//  USUARIOS
-//  Pestaña: 👥 USUARIOS → [1]=# [2]=NOMBRE [3]=ACTIVO
-// ─────────────────────────────────────────────────────────────
-function getUsuarios() {
-  try {
-    var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "USUARIOS");
-    var data = sh.getDataRange().getValues();
-    var result = [];
-    for (var i = DATA_START_ROW - 1; i < data.length; i++) {
-      var r = data[i];
-      if (!r[2]) continue;
-      if (String(r[3]).trim() !== "✅") continue;
-      result.push({ fila: i+1, nombre: String(r[2]).trim() });
-    }
-    return { ok: true, data: result };
-  } catch(e) {
-    // Si no existe la pestaña, devolver fallback
-    return { ok: true, data: [
-      { fila: 5, nombre: "Persona 1" },
-      { fila: 6, nombre: "Persona 2" }
-    ], fallback: true };
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-//  CATEGORÍAS
-//  Pestaña: 🏷️ CATEGORIAS → [1]=# [2]=NOMBRE [3]=ICONO [4]=ACTIVO
-// ─────────────────────────────────────────────────────────────
-function getCategorias() {
-  try {
-    var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "CATEGORIAS");
-    var data = sh.getDataRange().getValues();
-    var result = [];
-    for (var i = DATA_START_ROW - 1; i < data.length; i++) {
-      var r = data[i];
-      if (!r[2]) continue;
-      if (String(r[4]).trim() !== "✅") continue;
-      result.push({
-        fila: i+1,
-        nombre: String(r[2]).trim(),
-        icono:  String(r[3] || "inventory_2").trim()
-      });
-    }
-    return { ok: true, data: result };
-  } catch(e) {
-    return { ok: true, data: [
-      {fila:5,nombre:"Alimentación",icono:"restaurant"},
-      {fila:6,nombre:"Transporte",icono:"directions_car"},
-      {fila:7,nombre:"Ocio",icono:"movie"},
-      {fila:8,nombre:"Salud",icono:"local_hospital"},
-      {fila:9,nombre:"Ropa",icono:"checkroom"},
-      {fila:10,nombre:"Tecnología",icono:"laptop"},
-      {fila:11,nombre:"Hogar",icono:"home"},
-      {fila:12,nombre:"Suministros",icono:"bolt"},
-      {fila:13,nombre:"Otros",icono:"inventory_2"}
-    ], fallback: true };
-  }
-}
-
-function addCategoria(p) {
-  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), "CATEGORIAS");
-  var newRow = getLastDataRow(sh) + 1;
-  sh.getRange(newRow, 2, 1, 4).setValues([[
-    "", p.nombre || "Nueva", p.icono || "inventory_2", "✅"
-  ]]);
-  return { ok: true, msg: "Categoría añadida" };
-}
-
-function deleteCategoria(fila) {
-  getSheet(SpreadsheetApp.openById(SHEET_ID), "CATEGORIAS").deleteRow(fila);
+  var sh = getSheet(SpreadsheetApp.openById(SHEET_ID), sheetKey);
+  if (!sh) return { ok: false, error: "Hoja no encontrada: " + sheetKey };
+  sh.deleteRow(fila);
   return { ok: true };
 }
 
 // ─────────────────────────────────────────────────────────────
 //  UTILIDADES
 // ─────────────────────────────────────────────────────────────
+function getSheet(ss, keyword) {
+  var kw = keyword.toLowerCase();
+  var sheets = ss.getSheets();
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].getName().toLowerCase().indexOf(kw) !== -1) {
+      return sheets[i];
+    }
+  }
+  return null;
+}
+
 function getLastDataRow(sheet) {
   var data = sheet.getDataRange().getValues();
   for (var i = data.length - 1; i >= DATA_START_ROW - 1; i--) {
@@ -356,11 +366,10 @@ function getLastDataRow(sheet) {
   return DATA_START_ROW;
 }
 
-// Soporta tanto JSON normal como JSONP (para evitar CORS desde GitHub Pages)
+// Responde JSON o JSONP según parámetro callback
 function jsonResponse(obj, callback) {
   var json = JSON.stringify(obj);
   if (callback) {
-    // JSONP: envuelve la respuesta en la función callback
     return ContentService
       .createTextOutput(callback + "(" + json + ");")
       .setMimeType(ContentService.MimeType.JAVASCRIPT);
