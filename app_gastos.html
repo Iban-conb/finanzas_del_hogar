@@ -7,8 +7,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Finanzas del Hogar</title>
 <!-- ── FAVICON ── -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231A3A5C'/><rect x='5' y='10' width='22' height='15' rx='2' fill='none' stroke='%236AB4F0' stroke-width='1.8'/><rect x='5' y='14' width='22' height='4' fill='%236AB4F0' opacity='.35'/><rect x='9' y='19' width='6' height='2.5' rx='1' fill='%236AB4F0'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%231A3A5C'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%236AB4F0' opacity='.25'/><circle cx='23' cy='17' r='1.5' fill='%236AB4F0'/></svg>"><rect x='0' y='0' width='48' height='48' rx='13' fill='%231A3A5C'/><path d='M10 34V16a2 2 0 0 1 2-2h24a2 2 0 0 1 2 2v4H26a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12v4a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2z' fill='%236AB4F0'/><rect x='26' y='20' width='12' height='12' rx='2' fill='%236AB4F0' opacity='.4'/><circle cx='30' cy='26' r='2.2' fill='%236AB4F0'/></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231A3A5C'/><rect x='5' y='10' width='22' height='15' rx='2' fill='none' stroke='%236AB4F0' stroke-width='1.8'/><rect x='5' y='14' width='22' height='4' fill='%236AB4F0' opacity='.35'/><rect x='9' y='19' width='6' height='2.5' rx='1' fill='%236AB4F0'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%231A3A5C'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%236AB4F0' opacity='.25'/><circle cx='23' cy='17' r='1.5' fill='%236AB4F0'/></svg>"><rect x='0' y='0' width='48' height='48' rx='13' fill='%231A3A5C'/><path d='M10 34V16a2 2 0 0 1 2-2h24a2 2 0 0 1 2 2v4H26a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12v4a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2z' fill='%236AB4F0'/><rect x='26' y='20' width='12' height='12' rx='2' fill='%236AB4F0' opacity='.4'/><circle cx='30' cy='26' r='2.2' fill='%236AB4F0'/></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231A3A5C'/><rect x='5' y='10' width='22' height='15' rx='2' fill='none' stroke='%236AB4F0' stroke-width='1.8'/><rect x='5' y='14' width='22' height='4' fill='%236AB4F0' opacity='.35'/><rect x='9' y='19' width='6' height='2.5' rx='1' fill='%236AB4F0'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%231A3A5C'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%236AB4F0' opacity='.25'/><circle cx='23' cy='17' r='1.5' fill='%236AB4F0'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231A3A5C'/><rect x='5' y='10' width='22' height='15' rx='2' fill='none' stroke='%236AB4F0' stroke-width='1.8'/><rect x='5' y='14' width='22' height='4' fill='%236AB4F0' opacity='.35'/><rect x='9' y='19' width='6' height='2.5' rx='1' fill='%236AB4F0'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%231A3A5C'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%236AB4F0' opacity='.25'/><circle cx='23' cy='17' r='1.5' fill='%236AB4F0'/></svg>">
 <!-- ── FONTS ── -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -435,16 +435,19 @@ html, body {
   position: fixed; inset: 0; z-index: 200;
   background: var(--md-bg);
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
+  align-items: center; justify-content: flex-start;
   gap: 0;
+  overflow-y: auto;
+  padding: max(48px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom));
   transition: opacity .3s;
+  box-sizing: border-box;
 }
 .pin-screen.hidden { display: none; }
 .pin-screen.fade-out { opacity: 0; pointer-events: none; }
 
 .pin-brand {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: clamp(20px, 4vh, 40px);
 }
 .pin-logo-wrap {
   width: 80px; height: 80px;
@@ -470,13 +473,13 @@ html, body {
 .pin-subtitle {
   font-size: 15px;
   color: var(--md-on-surface-var);
-  margin-bottom: 28px;
+  margin-bottom: clamp(14px, 3vh, 28px);
   font-weight: 500;
 }
 
 .pin-dots {
   display: flex; gap: 16px;
-  margin-bottom: 40px;
+  margin-bottom: clamp(20px, 4vh, 40px);
 }
 .pin-dot {
   width: 16px; height: 16px;
