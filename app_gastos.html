@@ -5,10 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>Finanzas del Hogar</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Finanzas">
+<meta name="theme-color" content="#1A3A5C">
+<title>Hogar &amp; Finanzas</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.svg">
 <!-- ── FAVICON ── -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231A3A5C'/><rect x='5' y='10' width='22' height='15' rx='2' fill='none' stroke='%236AB4F0' stroke-width='1.8'/><rect x='5' y='14' width='22' height='4' fill='%236AB4F0' opacity='.35'/><rect x='9' y='19' width='6' height='2.5' rx='1' fill='%236AB4F0'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%231A3A5C'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%236AB4F0' opacity='.25'/><circle cx='23' cy='17' r='1.5' fill='%236AB4F0'/></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231A3A5C'/><rect x='5' y='10' width='22' height='15' rx='2' fill='none' stroke='%236AB4F0' stroke-width='1.8'/><rect x='5' y='14' width='22' height='4' fill='%236AB4F0' opacity='.35'/><rect x='9' y='19' width='6' height='2.5' rx='1' fill='%236AB4F0'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%231A3A5C'/><rect x='19' y='13' width='8' height='8' rx='1.5' fill='%236AB4F0' opacity='.25'/><circle cx='23' cy='17' r='1.5' fill='%236AB4F0'/></svg>">
 <!-- ── FONTS ── -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -2904,5 +2908,16 @@ function showToast(msg,type){const el=document.getElementById('toast');el.textCo
     </div>
   </div>
 </div>
+
+<script>
+// ── PWA: Registrar Service Worker ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registrado:', reg.scope))
+      .catch(err => console.warn('[SW] Error:', err));
+  });
+}
+</script>
 </body>
 </html>
